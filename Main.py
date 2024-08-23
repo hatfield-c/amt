@@ -2,7 +2,7 @@ from pymavlink import mavutil
 
 time_step = 1 / 20
 
-connection = mavutil.mavutil_connection("udpin:localhost:14569")
+connection = mavutil.mavlink_connection("udpin:localhost:14569")
 
 connection.wait_heartbeat()
 
