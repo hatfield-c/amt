@@ -1,9 +1,24 @@
-from pymavlink import mavutil
+import subprocess
+import time
+import rclpy
 
-time_step = 1 / 20
+import RosController as RosController
 
-connection = mavutil.mavlink_connection("udpin:localhost:14569")
+rclpy.init()
 
-connection.wait_heartbeat()
+command = "MicroXRCEAgent udp4 -p 8888"
+subprocess.run(["gnome-terminal", "--tab", "--", "bash", "-c", command + "; exec bash"])
+time.sleep(1)
 
-print("Heartbeat for system (system %u component %u)" % (connection.target_system, connection.target_component))
+offboard_control = RosController.RosController()
+
+rclpy.spin(offboard_control)
+
+offboard_control.destroy_node()
+rclpy.shutdown()
+
+#from pymavlink import mavutil
+#time_step = 1 / 20
+#connection = mavutil.mavlink_connection("udpin:localhost:14569")
+#connection.wait_heartbeat()
+#print("Heartbeat for system (system %u component %u)" % (connection.target_system, connection.target_component))
