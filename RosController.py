@@ -13,9 +13,9 @@ class RosController(Node):
 	def __init__(self):
 		super().__init__('minimal_publisher')
 		qos_profile = QoSProfile(
-			reliability = QoSReliabilityPolicy.RMW_QOS_POLICY_RELIABILITY_BEST_EFFORT,
-			durability = QoSDurabilityPolicy.RMW_QOS_POLICY_DURABILITY_TRANSIENT_LOCAL,
-			history = QoSHistoryPolicy.RMW_QOS_POLICY_HISTORY_KEEP_LAST,
+			reliability = QoSReliabilityPolicy.BEST_EFFORT,
+			durability = QoSDurabilityPolicy.TRANSIENT_LOCAL,
+			history = QoSHistoryPolicy.KEEP_LAST,
 			depth = 1
 		)
 

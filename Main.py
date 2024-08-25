@@ -10,11 +10,15 @@ command = "micro-xrce-dds-agent udp4 -p 8888"
 subprocess.run(["gnome-terminal", "--tab", "--", "bash", "-c", command + "; exec bash"])
 time.sleep(1)
 
-offboard_control = RosController.RosController()
+ros_controller = RosController.RosController()
 
-rclpy.spin(offboard_control)
+for i in range(100):
+	rclpy.spin_once(ros_controller)
+	print(ros_controller.trueYaw)
+	
+	time.sleep(0.7)
 
-offboard_control.destroy_node()
+ros_controller.destroy_node()
 rclpy.shutdown()
 
 #from pymavlink import mavutil
