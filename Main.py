@@ -6,7 +6,7 @@ import RosController as RosController
 
 rclpy.init()
 
-command = "MicroXRCEAgent udp4 -p 8888"
+command = "micro-xrce-dds-agent udp4 -p 8888"
 subprocess.run(["gnome-terminal", "--tab", "--", "bash", "-c", command + "; exec bash"])
 time.sleep(1)
 
