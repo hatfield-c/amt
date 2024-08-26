@@ -13,7 +13,7 @@ ros_controller = RosController.RosController()
 
 
 
-for i in range(100):
+for i in range(10):
 	rclpy.spin_once(ros_controller)
 	
 	quaternion = torch.FloatTensor(ros_controller.quaternion).cuda()
@@ -23,9 +23,11 @@ for i in range(100):
 	local_forward = Transform.GetForward(quaternion)
 	
 	print("main:", local_up, local_forward, ros_controller.heading)
-	input()
+	#input()
 	
-	time.sleep(0.7)
+	ros_controller.publish_motor([0, 0, 0, 0])
+	
+	time.sleep(1)
 
 ros_controller.destroy_node()
 rclpy.shutdown()
