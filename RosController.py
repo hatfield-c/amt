@@ -44,28 +44,22 @@ class RosController(Node):
 		timer_period = 0.02
 		self.timer = self.create_timer(timer_period, self.Update)
 		
-		self.armed = False
-		self.servo_delta = 0.05
-		self.servo_val = 0
-		
 		self.cycles = 0
 		self.max_cycles = 100
 		
 	def Update(self):
 		self.cycles += 1
 		
-		#self.SetArmed(1.0)
 		self.PrepareToCommand()
 		
 		if self.cycles < 10:
 			self.SetArmed(1.0)
 			return
 		
-		#self.publish_thrust(1.0)
-		self.publish_motor([0.5, 0, 0, 0])
+		self.publish_motor([0.341, 0.341, 0.341, 0.341])
 		
 		if self.cycles > self.max_cycles:
-			#self.publish_motor([0.0, 0, 0, 0])
+			self.publish_motor([0.0, 0, 0, 0])
 			self.SetArmed(0.0)
 			exit()
 
@@ -123,27 +117,10 @@ class RosController(Node):
 		msg = ActuatorMotors()
 		
 		msg.timestamp = int(Clock().now().nanoseconds / 1000)
-		#msg.reversible_flags = 0
 		msg.control = np.zeros(12, dtype = np.float32)
 		msg.control[0] = thrusts[0]
 		msg.control[1] = thrusts[1]
 		msg.control[2] = thrusts[2]
 		msg.control[3] = thrusts[3]
-		
-		if self.servo_val > 1:
-			self.servo_val = 1
-			self.servo_delta = -self.servo_delta
-			
-		if self.servo_val < 0:
-			self.servo_val = 0
-			self.servo_delta = -self.servo_delta
-		
-		self.servo_val += self.servo_delta
-		
-		#msg.control[4] = self.servo_val
-		#msg.control[5] = self.servo_val
-		#msg.control[6] = self.servo_val
-		#msg.control[7] = self.servo_val
-		#msg.control[8] = self.servo_val
 		
 		self.motor_publisher.publish(msg)
