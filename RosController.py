@@ -66,6 +66,7 @@ class RosController(Node):
 			msg.command = VehicleCommand.VEHICLE_CMD_DO_SET_MODE
 			msg.param1 = 1.0
 			msg.param2 = 6.0
+			msg.timestamp = int(Clock().now().nanoseconds / 1000)
 			
 			self.vehicle_command_publisher.publish(msg)
 		
@@ -77,6 +78,8 @@ class RosController(Node):
 	def publish_motor(self, thrusts):
 		msg = ActuatorMotors()
 		
+		msg.timestamp = int(Clock().now().nanoseconds / 1000)
+		msg.timestamp_sample = int(Clock().now().nanoseconds / 1000)
 		msg.control = np.zeros(12, dtype = np.float32) + 100
 		#msg.control[0] = thrusts[0]
 		#msg.control[1] = thrusts[1]
