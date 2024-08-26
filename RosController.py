@@ -49,21 +49,21 @@ class RosController(Node):
 		self.servo_val = 0
 		
 		self.cycles = 0
-		self.max_cycles = 100
+		self.max_cycles = 10
 		
 	def Update(self):
 		if not self.armed:
 			self.SetArmed(1.0)
 			self.armed = True
 			
-		self.SetArmed(1.0)
 		self.PrepareToCommand()
 		
 		#self.publish_thrust(1.0)
-		self.publish_motor([0, 0, 0, 0])
+		self.publish_motor([0.5, 0, 0, 0])
 		
 		if self.cycles > self.max_cycles:
-			self.publish_motor([0, 0, 0, 0])
+			self.publish_motor([0.0, 0, 0, 0])
+			self.SetArmed(0.0)
 			exit()
 
 	def PrepareToCommand(self):
@@ -122,10 +122,10 @@ class RosController(Node):
 		msg.timestamp = int(Clock().now().nanoseconds / 1000)
 		#msg.reversible_flags = 0
 		msg.control = np.zeros(12, dtype = np.float32)
-		msg.control[0] = thrusts[0] * 0
-		msg.control[1] = thrusts[1] * 0
-		msg.control[2] = thrusts[2] * 0
-		msg.control[3] = thrusts[3] * 0
+		msg.control[0] = thrusts[0]
+		msg.control[1] = thrusts[1]
+		msg.control[2] = thrusts[2]
+		msg.control[3] = thrusts[3]
 		
 		if self.servo_val > 1:
 			self.servo_val = 1
