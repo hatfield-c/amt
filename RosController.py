@@ -80,6 +80,7 @@ class RosController(Node):
 		
 		msg.timestamp = int(Clock().now().nanoseconds / 1000)
 		msg.timestamp_sample = int(Clock().now().nanoseconds / 1000)
+		msg.reversible_flags = 0
 		msg.control = np.zeros(12, dtype = np.float32) + 1
 		#msg.control[0] = thrusts[0]
 		#msg.control[1] = thrusts[1]
