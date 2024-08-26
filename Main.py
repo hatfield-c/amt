@@ -1,6 +1,7 @@
 import subprocess
 import time
 import rclpy
+import torch
 
 import RosController as RosController
 import Quaternion
@@ -13,8 +14,9 @@ ros_controller = RosController.RosController()
 for i in range(100):
 	rclpy.spin_once(ros_controller)
 	
-	quaternion = ros_controller.quaternion
-	print(type(quaternion), quaternion.shape)
+	quaternion = torch.FoatTensor(ros_controller.quaternion).cuda()
+	quaternion = quaternion.view(1, -1)
+	
 	local_up = Transform.GetUp(quaternion)
 	local_forward = Transform.GetForward(quaternion)
 	
