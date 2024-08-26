@@ -67,7 +67,6 @@ class RosController(Node):
 			msg.param1 = 1.0
 			msg.param2 = 6.0
 			
-			self.publish_vehicle_command(VehicleCommand.VEHICLE_CMD_DO_SET_MODE, 1., 6.)
 			self.vehicle_command_publisher.publish(msg)
 		
 	def attitude_callback(self, msg):
