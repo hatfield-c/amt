@@ -52,6 +52,8 @@ class RosController(Node):
 		self.max_cycles = 100
 		
 	def Update(self):
+		self.cycles += 1
+		
 		#self.SetArmed(1.0)
 		self.PrepareToCommand()
 		
@@ -66,8 +68,6 @@ class RosController(Node):
 			#self.publish_motor([0.0, 0, 0, 0])
 			self.SetArmed(0.0)
 			exit()
-			
-		self.cycles += 1
 
 	def PrepareToCommand(self):
 		msg = OffboardControlMode()
