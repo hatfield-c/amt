@@ -48,6 +48,9 @@ class RosController(Node):
 		self.servo_delta = 0.05
 		self.servo_val = 0
 		
+		self.cycles = 0
+		self.max_cycles = 100
+		
 	def Update(self):
 		if not self.armed:
 			self.SetArmed(1.0)
@@ -57,7 +60,11 @@ class RosController(Node):
 		self.PrepareToCommand()
 		
 		#self.publish_thrust(1.0)
-		self.publish_motor([0.1, 0.1, 0.1, 0.1])
+		self.publish_motor([0, 0, 0, 0])
+		
+		if self.cycles > self.max_cycles:
+			self.publish_motor([0, 0, 0, 0])
+			exit()
 
 	def PrepareToCommand(self):
 		msg = OffboardControlMode()
@@ -113,7 +120,7 @@ class RosController(Node):
 		msg = ActuatorMotors()
 		
 		msg.timestamp = int(Clock().now().nanoseconds / 1000)
-		msg.reversible_flags = 0
+		#msg.reversible_flags = 0
 		msg.control = np.zeros(12, dtype = np.float32)
 		msg.control[0] = thrusts[0] * 0
 		msg.control[1] = thrusts[1] * 0
@@ -130,10 +137,10 @@ class RosController(Node):
 		
 		self.servo_val += self.servo_delta
 		
-		msg.control[4] = self.servo_val
-		msg.control[5] = self.servo_val
-		msg.control[6] = self.servo_val
-		msg.control[7] = self.servo_val
-		msg.control[8] = self.servo_val
+		#msg.control[4] = self.servo_val
+		#msg.control[5] = self.servo_val
+		#msg.control[6] = self.servo_val
+		#msg.control[7] = self.servo_val
+		#msg.control[8] = self.servo_val
 		
 		self.motor_publisher.publish(msg)
