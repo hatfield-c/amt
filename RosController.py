@@ -44,7 +44,15 @@ class RosController(Node):
 		timer_period = 0.02
 		self.timer = self.create_timer(timer_period, self.Update)
 		
+		self.armed = False
+		self.servo_delta = 0.05
+		self.servo_val = 0
+		
 	def Update(self):
+		if not self.armed:
+			self.SetArmed(1.0)
+			self.armed = True
+			
 		self.SetArmed(1.0)
 		self.PrepareToCommand()
 		
@@ -104,13 +112,28 @@ class RosController(Node):
 	def publish_motor(self, thrusts):
 		msg = ActuatorMotors()
 		
-		#msg.timestamp_sample = int(Clock().now().nanoseconds / 1000)
 		msg.timestamp = int(Clock().now().nanoseconds / 1000)
 		msg.reversible_flags = 0
-		msg.control = np.zeros(12, dtype = np.float32) + 1.0
-		#msg.control[0] = thrusts[0]
-		#msg.control[1] = thrusts[1]
-		#msg.control[2] = thrusts[2]
-		#msg.control[3] = thrusts[3]
+		msg.control = np.zeros(12, dtype = np.float32)
+		msg.control[0] = thrusts[0] * 0
+		msg.control[1] = thrusts[1] * 0
+		msg.control[2] = thrusts[2] * 0
+		msg.control[3] = thrusts[3] * 0
+		
+		if self.servo_val > 1:
+			self.servo_val = 1
+			self.servo_delta = -self.servo_delta
+			
+		if self.servo_val < 0:
+			self.servo_val = 0
+			self.servo_delta = -self.servo_delta
+		
+		self.servo_val += self.servo_delta
+		
+		msg.control[4] = self.servo_val
+		msg.control[5] = self.servo_val
+		msg.control[6] = self.servo_val
+		msg.control[7] = self.servo_val
+		msg.control[8] = self.servo_val
 		
 		self.motor_publisher.publish(msg)
