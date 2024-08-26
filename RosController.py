@@ -74,18 +74,13 @@ class RosController(Node):
 
 		self.quaternion = orientation_q
 		
-	def gps_callback(self, msg):
-		heading = msg.heading
-
-		self.heading = heading
-
 	def publish_motor(self, thrusts):
 		msg = ActuatorMotors()
 		
-		msg.control = np.zeros(12, dtype = np.float32)
-		msg.control[0] = thrusts[0]
-		msg.control[1] = thrusts[1]
-		msg.control[2] = thrusts[2]
-		msg.control[3] = thrusts[3]
+		msg.control = np.zeros(12, dtype = np.float32) + 100
+		#msg.control[0] = thrusts[0]
+		#msg.control[1] = thrusts[1]
+		#msg.control[2] = thrusts[2]
+		#msg.control[3] = thrusts[3]
 		
 		self.motor_publisher.publish(msg)
