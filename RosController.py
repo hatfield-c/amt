@@ -57,9 +57,10 @@ class RosController(Node):
 		
 		if self.cycles < 10:
 			self.SetArmed(1.0)
+			return
 		
 		#self.publish_thrust(1.0)
-		#self.publish_motor([0.5, 0, 0, 0])
+		self.publish_motor([0.5, 0, 0, 0])
 		
 		if self.cycles > self.max_cycles:
 			#self.publish_motor([0.0, 0, 0, 0])
