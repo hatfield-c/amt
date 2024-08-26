@@ -6,6 +6,7 @@ from rclpy.qos import QoSProfile, QoSReliabilityPolicy, QoSHistoryPolicy, QoSDur
 
 from px4_msgs.msg import OffboardControlMode
 from px4_msgs.msg import VehicleAttitude
+from px4_msgs.msg import SensorGps
 from px4_msgs.msg import VehicleCommand
 
 class RosController(Node):
@@ -26,17 +27,28 @@ class RosController(Node):
 			qos_profile
 		)
 		
+		self.compass_sub = self.create_subscription(
+			SensorGps,
+			'/fmu/out/vehicle_gps_position',
+			self.gps_callback,
+			qos_profile
+		)
+		
 		#self.publisher_offboard_mode = self.create_publisher(OffboardControlMode, '/fmu/in/offboard_control_mode', qos_profile)
 		#self.vehicle_command_publisher_ = self.create_publisher(VehicleCommand, "/fmu/in/vehicle_command", 10)
 
-		print("ROS Init!")
+		self.quaternion = None
+		self.heading = None
 
 	def attitude_callback(self, msg):
-		print("attitude callback")
 		orientation_q = msg.q
 
-		#trueYaw is the drones current yaw value
 		self.quaternion = orientation_q
+		
+	def gps_callback(self, msg):
+		heading = msg.heading
+
+		self.heading = heading
 
 	def publish_vehicle_command(self, command, param1=0.0, param2=0.0, param7=0.0):
 		msg = VehicleCommand()
