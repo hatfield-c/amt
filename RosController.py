@@ -31,14 +31,25 @@ class RosController(Node):
 			qos_profile
 		)
 		
-		self.publisher_offboard_mode = self.create_publisher(OffboardControlMode, '/fmu/in/offboard_control_mode', 10)
-		self.motor_publisher = self.create_publisher(ActuatorMotors, "/fmu/in/actuator_motors", 10)
-		self.vehicle_command_publisher = self.create_publisher(VehicleCommand, "/fmu/in/vehicle_command", 10)
+		self.publisher_offboard_mode = self.create_publisher(OffboardControlMode, '/fmu/in/offboard_control_mode', qos_profile)
+		self.motor_publisher = self.create_publisher(ActuatorMotors, "/fmu/in/actuator_motors", qos_profile)
+		self.vehicle_command_publisher = self.create_publisher(VehicleCommand, "/fmu/in/vehicle_command", qos_profile)
 		
-		self.thrust_publisher = self.create_publisher(VehicleThrustSetpoint, "/fmu/in/vehicle_thrust_setpoint", 10)
+		#self.thrust_publisher = self.create_publisher(VehicleThrustSetpoint, "/fmu/in/vehicle_thrust_setpoint", qos_profile)
 
 		self.quaternion = None
 		self.heading = None
+		
+
+		timer_period = 0.02
+		self.timer = self.create_timer(timer_period, self.Update)
+		
+	def Update(self):
+		self.SetArmed(1.0)
+		self.PrepareToCommand()
+		
+		#self.publish_thrust(1.0)
+		self.publish_motor([0.1, 0.1, 0.1, 0.1])
 
 	def PrepareToCommand(self):
 		msg = OffboardControlMode()
@@ -69,7 +80,6 @@ class RosController(Node):
 		self.vehicle_command_publisher.publish(msg)
 		
 		if arm_value == 1:
-			time.sleep(0.05)
 			
 			msg.command = VehicleCommand.VEHICLE_CMD_DO_SET_MODE
 			msg.param1 = 1.0
@@ -88,7 +98,7 @@ class RosController(Node):
 		
 		msg.timestamp = int(Clock().now().nanoseconds / 1000)
 		msg.xyz = np.array([0, 0, 1], dtype = np.float32)
-		
+	
 		self.thrust_publisher.publish(msg)
 		
 	def publish_motor(self, thrusts):
