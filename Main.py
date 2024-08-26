@@ -11,6 +11,7 @@ ros_controller = RosController.RosController()
 for i in range(100):
 	rclpy.spin_once(ros_controller)
 	print("main:", ros_controller.quaternion)
+	input()
 	
 	time.sleep(0.7)
 
