@@ -3,6 +3,8 @@ import time
 import rclpy
 
 import RosController as RosController
+import Quaternion
+import Transform
 
 rclpy.init()
 
@@ -10,7 +12,12 @@ ros_controller = RosController.RosController()
 
 for i in range(100):
 	rclpy.spin_once(ros_controller)
-	print("main:", ros_controller.quaternion)
+	
+	quaternion = ros_controller.quaternion
+	local_up = Transform.GetUp(quaternion)
+	local_forward = Transform.GetForward(quaternion)
+	
+	print("main:", local_up, local_forward)
 	input()
 	
 	time.sleep(0.7)
