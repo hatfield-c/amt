@@ -19,15 +19,10 @@ for i in range(10):
 	
 	ros_controller.PrepareToCommand()
 	
-	quaternion = torch.FloatTensor(ros_controller.quaternion).cuda()
-	quaternion = quaternion.view(1, -1)
-	
-	local_up = Transform.GetUp(quaternion)
-	local_forward = Transform.GetForward(quaternion)
-	
-	print("main:", local_up, local_forward, ros_controller.heading)
+	#print("main:", local_up, local_forward, ros_controller.heading)
 	#input()
 	
+	ros_controller.publish_thrust(1.0)
 	ros_controller.publish_motor([0.1, 0.1, 0.1, 0.1])
 	
 	time.sleep(0.3)
