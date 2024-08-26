@@ -36,8 +36,7 @@ class RosController(Node):
 		orientation_q = msg.q
 
 		#trueYaw is the drones current yaw value
-		self.trueYaw = -(np.arctan2(2.0*(orientation_q[3]*orientation_q[0] + orientation_q[1]*orientation_q[2]), 
-								  1.0 - 2.0*(orientation_q[0]*orientation_q[0] + orientation_q[1]*orientation_q[1])))
+		self.quaternion = orientation_q
 
 	def publish_vehicle_command(self, command, param1=0.0, param2=0.0, param7=0.0):
 		msg = VehicleCommand()

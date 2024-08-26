@@ -6,15 +6,11 @@ import RosController as RosController
 
 rclpy.init()
 
-command = "micro-xrce-dds-agent udp4 -p 8888"
-subprocess.run(["gnome-terminal", "--tab", "--", "bash", "-c", command + "; exec bash"])
-time.sleep(1)
-
 ros_controller = RosController.RosController()
 
 for i in range(100):
 	rclpy.spin_once(ros_controller)
-	print(ros_controller.trueYaw)
+	print("main:", ros_controller.quaternion)
 	
 	time.sleep(0.7)
 
