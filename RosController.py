@@ -30,8 +30,8 @@ class RosController(Node):
 			qos_profile
 		)
 		
-		self.publisher_offboard_mode = self.create_publisher(OffboardControlMode, '/fmu/in/offboard_control_mode', qos_profile)
-		self.motor_publisher = self.create_publisher(ActuatorMotors, "/fmu/in/actuator_motors", qos_profile)
+		self.publisher_offboard_mode = self.create_publisher(OffboardControlMode, '/fmu/in/offboard_control_mode', 10)
+		self.motor_publisher = self.create_publisher(ActuatorMotors, "/fmu/in/actuator_motors", 10)
 		self.vehicle_command_publisher = self.create_publisher(VehicleCommand, "/fmu/in/vehicle_command", 10)
 
 		self.quaternion = None
@@ -41,6 +41,11 @@ class RosController(Node):
 		msg = OffboardControlMode()
 		
 		msg.timestamp = int(Clock().now().nanoseconds / 1000)
+		msg.position = False
+		msg.velocity = False
+		msg.acceleration = False
+		msg.attitude = False
+		msg.body_rate = False
 		msg.direct_actuator = True
 		
 		self.publisher_offboard_mode.publish(msg)
@@ -78,8 +83,8 @@ class RosController(Node):
 	def publish_motor(self, thrusts):
 		msg = ActuatorMotors()
 		
-		msg.timestamp = int(Clock().now().nanoseconds / 1000)
 		msg.timestamp_sample = int(Clock().now().nanoseconds / 1000)
+		msg.timestamp = int(Clock().now().nanoseconds / 1000)
 		msg.reversible_flags = 0
 		msg.control = np.zeros(12, dtype = np.float32) + 1
 		#msg.control[0] = thrusts[0]
