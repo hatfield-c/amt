@@ -45,7 +45,7 @@ class RosController(Node):
 	def publish_motor(self, thrusts):
 		msg = ActuatorMotors()
 		
-		msg.control = np.zeros(12)
+		msg.control = np.zeros(12, dtype = np.float32)
 		msg.control[0] = thrusts[0]
 		msg.control[1] = thrusts[1]
 		msg.control[2] = thrusts[2]
