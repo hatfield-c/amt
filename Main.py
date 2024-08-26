@@ -14,6 +14,7 @@ for i in range(100):
 	rclpy.spin_once(ros_controller)
 	
 	quaternion = ros_controller.quaternion
+	print(type(quaternion), quaternion.shape)
 	local_up = Transform.GetUp(quaternion)
 	local_forward = Transform.GetForward(quaternion)
 	
