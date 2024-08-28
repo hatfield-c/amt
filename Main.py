@@ -13,6 +13,12 @@ connection = mavutil.mavlink_connection("udpin:localhost:14569")
 connection.wait_heartbeat()
 print("Heartbeat for system (system %u component %u)" % (connection.target_system, connection.target_component))
 
+import inspect
+
+print(inspect.getsource(connection.set_actuator))
+
+#connection.set_actuator(0.3, 0.3, 0.3, 0.3, 0.3, 0.3)
+
 exit()
 
 rclpy.init()
