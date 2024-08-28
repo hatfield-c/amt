@@ -6,7 +6,6 @@ import numpy as np
 from rclpy.clock import Clock
 from rclpy.qos import QoSProfile, QoSReliabilityPolicy, QoSHistoryPolicy, QoSDurabilityPolicy
 
-
 from px4_msgs.msg import OffboardControlMode
 from px4_msgs.msg import ActuatorMotors
 from px4_msgs.msg import ActuatorServos
@@ -37,8 +36,6 @@ class RosController(Node):
 		self.servo_publisher = self.create_publisher(ActuatorServos, "/fmu/in/actuator_servos", qos_profile)
 		self.vehicle_command_publisher = self.create_publisher(VehicleCommand, "/fmu/in/vehicle_command", qos_profile)
 		
-		#self.thrust_publisher = self.create_publisher(VehicleThrustSetpoint, "/fmu/in/vehicle_thrust_setpoint", qos_profile)
-
 		self.quaternion = None
 		self.heading = None
 		
