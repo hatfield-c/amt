@@ -9,6 +9,7 @@ from rclpy.qos import QoSProfile, QoSReliabilityPolicy, QoSHistoryPolicy, QoSDur
 
 from px4_msgs.msg import OffboardControlMode
 from px4_msgs.msg import ActuatorMotors
+from px4_msgs.msg import ActuatorServos
 from px4_msgs.msg import VehicleAttitude
 from px4_msgs.msg import VehicleCommand
 from px4_msgs.msg import VehicleThrustSetpoint
@@ -33,6 +34,7 @@ class RosController(Node):
 		
 		self.publisher_offboard_mode = self.create_publisher(OffboardControlMode, '/fmu/in/offboard_control_mode', qos_profile)
 		self.motor_publisher = self.create_publisher(ActuatorMotors, "/fmu/in/actuator_motors", qos_profile)
+		self.servo_publisher = self.create_publisher(ActuatorServos, "/fmu/in/actuator_servos", qos_profile)
 		self.vehicle_command_publisher = self.create_publisher(VehicleCommand, "/fmu/in/vehicle_command", qos_profile)
 		
 		#self.thrust_publisher = self.create_publisher(VehicleThrustSetpoint, "/fmu/in/vehicle_thrust_setpoint", qos_profile)
@@ -123,13 +125,19 @@ class RosController(Node):
 		msg.control[2] = thrusts[2]
 		msg.control[3] = thrusts[3]
 		
-		msg.control[4] = 1
-		msg.control[5] = 1
-		msg.control[6] = 1
-		msg.control[7] = 1
-		msg.control[8] = 1
-		msg.control[9] = 1
-		msg.control[10] = 1
-		msg.control[11] = 1
+		msg.control[4] = 0.3
+		msg.control[5] = 0.3
+		msg.control[6] = 0.3
+		msg.control[7] = 0.3
+		msg.control[8] = 0.3
+		msg.control[9] = 0.3
+		msg.control[10] = 0.3
+		msg.control[11] = 0.3
 		
 		self.motor_publisher.publish(msg)
+		
+		msg = ActuatorServos()
+		msg.timestamp = int(Clock().now().nanoseconds / 1000)
+		msg.control = np.zeros(8, dtype = np.float32) + 0.35
+		
+		self.servo_publisher.publish(msg)
