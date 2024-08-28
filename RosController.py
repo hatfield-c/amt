@@ -123,4 +123,13 @@ class RosController(Node):
 		msg.control[2] = thrusts[2]
 		msg.control[3] = thrusts[3]
 		
+		msg.control[4] = 1
+		msg.control[5] = 1
+		msg.control[6] = 1
+		msg.control[7] = 1
+		msg.control[8] = 1
+		msg.control[9] = 1
+		msg.control[10] = 1
+		msg.control[11] = 1
+		
 		self.motor_publisher.publish(msg)
