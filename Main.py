@@ -13,9 +13,19 @@ connection = mavutil.mavlink_connection("udpin:localhost:14569")
 connection.wait_heartbeat()
 print("Heartbeat for system (system %u component %u)" % (connection.target_system, connection.target_component))
 
-import inspect
-
-print(inspect.getsource(connection.set_actuator))
+connection.mav.command_long_send(
+	0, 
+	0, 
+	187, 
+	0,
+	0.3, 
+	0.3, 
+	0.3, 
+	0.3, 
+	0.3, 
+	0.3,
+	0
+)
 
 #connection.set_actuator(0.3, 0.3, 0.3, 0.3, 0.3, 0.3)
 
