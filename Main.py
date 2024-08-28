@@ -16,6 +16,20 @@ print("Heartbeat for system (system %u component %u)" % (connection.target_syste
 connection.mav.command_long_send(
 	0, 
 	0, 
+	400, 
+	0,
+	1, 
+	21196, 
+	0, 
+	0, 
+	0, 
+	0,
+	0
+)
+
+connection.mav.command_long_send(
+	0, 
+	0, 
 	187, 
 	0,
 	0.3, 
