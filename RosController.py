@@ -1,4 +1,5 @@
 import time
+import torch
 
 import rclpy
 from rclpy.node import Node
@@ -27,7 +28,14 @@ class RosController(Node):
 		self.attitude_sub = self.create_subscription(
 			VehicleAttitude,
 			'/fmu/out/vehicle_attitude',
-			self.attitude_callback,
+			self.AttitudeCallback,
+			qos_profile
+		)
+		
+		self.position_sub = self.create_subscription(
+			VehicleAttitude,
+			'/fmu/out/vehicle_local_position',
+			self.PositionCallback,
 			qos_profile
 		)
 		
@@ -38,7 +46,8 @@ class RosController(Node):
 		
 		self.quaternion = None
 		self.heading = None
-		
+		self.position = torch.zeros((1, 3)).cuda()
+		self.velocity = torch.zeros((1, 3)).cuda()
 
 		timer_period = 0.02
 		self.timer = self.create_timer(timer_period, self.Update)
@@ -49,18 +58,7 @@ class RosController(Node):
 	def Update(self):
 		self.cycles += 1
 		
-		self.PrepareToCommand()
-		
-		if self.cycles < 10:
-			self.SetArmed(1.0)
-			return
-		
-		self.publish_motor([0.341, 0.341, 0.341, 0.341])
-		
-		if self.cycles > self.max_cycles:
-			self.publish_motor([0.0, 0, 0, 0])
-			self.SetArmed(0.0)
-			exit()
+		print("test")
 
 	def PrepareToCommand(self):
 		msg = OffboardControlMode()
@@ -99,7 +97,18 @@ class RosController(Node):
 			
 			self.vehicle_command_publisher.publish(msg)
 		
-	def attitude_callback(self, msg):
+	def PositionCallback(self, msg):
+		self.position[0, 0] = msg.x
+		self.position[0, 1] = msg.y
+		self.position[0, 2] = msg.z
+		
+		self.velocity[0, 0] = msg.vx
+		self.velocity[0, 1] = msg.vy
+		self.velocity[0, 2] = msg.vz
+		
+		self.heading = msg.heading
+		
+	def AttitudeCallback(self, msg):
 		orientation_q = msg.q
 
 		self.quaternion = orientation_q
