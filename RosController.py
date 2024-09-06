@@ -11,6 +11,7 @@ from px4_msgs.msg import OffboardControlMode
 from px4_msgs.msg import ActuatorMotors
 from px4_msgs.msg import ActuatorServos
 from px4_msgs.msg import VehicleAttitude
+from px4_msgs.msg import VehicleLocalPosition
 from px4_msgs.msg import VehicleCommand
 from px4_msgs.msg import VehicleThrustSetpoint
 
@@ -33,7 +34,7 @@ class RosController(Node):
 		)
 		
 		self.position_sub = self.create_subscription(
-			VehicleAttitude,
+			VehicleLocalPosition,
 			'/fmu/out/vehicle_local_position',
 			self.PositionCallback,
 			qos_profile
