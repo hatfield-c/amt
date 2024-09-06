@@ -58,7 +58,7 @@ class RosController(Node):
 	def Update(self):
 		self.cycles += 1
 		
-		print("test")
+		print(self.position, self.velocity, self.heading)
 
 	def PrepareToCommand(self):
 		msg = OffboardControlMode()
