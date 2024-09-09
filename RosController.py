@@ -8,6 +8,7 @@ from rclpy.clock import Clock
 from rclpy.qos import QoSProfile, QoSReliabilityPolicy, QoSHistoryPolicy, QoSDurabilityPolicy
 
 from px4_msgs.msg import OffboardControlMode
+from px4_msgs.msg import ManualControlSetpoint
 from px4_msgs.msg import ActuatorMotors
 from px4_msgs.msg import ActuatorServos
 from px4_msgs.msg import VehicleAttitude
@@ -40,6 +41,7 @@ class RosController(Node):
 			qos_profile
 		)
 		
+		self.rc_spoofer_publisher = self.create_publisher(ManualControlSetpoint, "/fmu/in/manual_control_input", qos_profile)
 		self.publisher_offboard_mode = self.create_publisher(OffboardControlMode, '/fmu/in/offboard_control_mode', qos_profile)
 		self.motor_publisher = self.create_publisher(ActuatorMotors, "/fmu/in/actuator_motors", qos_profile)
 		self.servo_publisher = self.create_publisher(ActuatorServos, "/fmu/in/actuator_servos", qos_profile)
@@ -59,7 +61,17 @@ class RosController(Node):
 	def Update(self):
 		self.cycles += 1
 		
+		self.SetDropperPosition(0.35)
+		
 		print(self.position, self.velocity, self.heading)
+
+	def SetDropperPosition(self, position_signal):
+		#msg = ManualControlSetpoint()
+		msg = ActuatorServos()
+		msg.timestamp = int(Clock().now().nanoseconds / 1000)
+		msg.control = np.zeros(8, dtype = np.float32) + position_signal
+		
+		self.servo_publisher.publish(msg)
 
 	def PrepareToCommand(self):
 		msg = OffboardControlMode()
@@ -143,8 +155,3 @@ class RosController(Node):
 		
 		self.motor_publisher.publish(msg)
 		
-		msg = ActuatorServos()
-		msg.timestamp = int(Clock().now().nanoseconds / 1000)
-		msg.control = np.zeros(8, dtype = np.float32) + 0.35
-		
-		self.servo_publisher.publish(msg)

@@ -1,4 +1,4 @@
-import subprocess
+
 import time
 import rclpy
 import torch
@@ -7,8 +7,6 @@ import traceback
 import RosController as RosController
 import Quaternion
 import Transform
-
-from pymavlink import mavutil
 
 try:
 
