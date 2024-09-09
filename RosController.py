@@ -73,17 +73,27 @@ class RosController(Node):
 		t_signal = math.sin(self.cycles * (math.pi / 200))
 		t_signal = max(t_signal, 0.7)
 		
-		self.publish_motor([t_signal, t_signal, t_signal, t_signal])
+		#self.publish_motor([t_signal, t_signal, t_signal, t_signal])
+		self.SetDropperPosition(t_signal)
 		
 		print(self.position, self.velocity, self.heading)
 
 	def SetDropperPosition(self, position_signal):
-		#msg = ManualControlSetpoint()
-		msg = ActuatorServos()
+		msg = ManualControlSetpoint()
 		msg.timestamp = int(Clock().now().nanoseconds / 1000)
-		msg.control = np.zeros(8, dtype = np.float32) + position_signal
+		msg.roll = position_signal
+		msg.pitch = position_signal
+		msg.yaw = position_signal
+		msg.throttle = position_signal
 		
-		self.servo_publisher.publish(msg)
+		msg.aux1 = position_signal
+		msg.aux2 = position_signal
+		msg.aux3 = position_signal
+		msg.aux4 = position_signal
+		msg.aux5 = position_signal
+		msg.aux6 = position_signal
+		
+		self.rc_spoofer_publisher.publish(msg)
 
 	def PrepareToCommand(self):
 		msg = OffboardControlMode()
