@@ -61,7 +61,15 @@ class RosController(Node):
 	def Update(self):
 		self.cycles += 1
 		
-		self.SetDropperPosition(0.35)
+		#self.SetDropperPosition(0.35)
+		
+		self.PrepareToCommand()
+	
+		if self.cycles < 10:
+			self.SetArmed(1.0)
+			return
+		
+		self.publish_motor([0.341, 0.341, 0.341, 0.341])
 		
 		print(self.position, self.velocity, self.heading)
 
@@ -154,4 +162,10 @@ class RosController(Node):
 		msg.control[11] = 0.3
 		
 		self.motor_publisher.publish(msg)
+		
+		msg = ActuatorServos()
+		msg.timestamp = int(Clock().now().nanoseconds / 1000)
+		msg.control = np.zeros(8, dtype = np.float32) + 0.35
+		
+		self.servo_publisher.publish(msg)
 		
