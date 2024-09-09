@@ -1,5 +1,6 @@
 import time
 import torch
+import math
 
 import rclpy
 from rclpy.node import Node
@@ -69,7 +70,10 @@ class RosController(Node):
 			self.SetArmed(1.0)
 			return
 		
-		self.publish_motor([0.341, 0.341, 0.341, 0.341])
+		t_signal = math.sin(self.cycles * (math.pi / 200))
+		t_signal = max(t_signal, 0.7)
+		
+		self.publish_motor([t_signal, t_signal, t_signal, t_signal])
 		
 		print(self.position, self.velocity, self.heading)
 
