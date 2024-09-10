@@ -73,8 +73,6 @@ class RosController(Node):
 		
 	def Update(self):
 		
-		print(self.is_armed)
-		
 		if not self.is_armed:
 			return
 		
@@ -89,31 +87,32 @@ class RosController(Node):
 		#	return
 		
 		t_signal = math.sin(self.cycles * (math.pi / 200))
-		t_signal = max(t_signal, 0.7)
 		
 		#self.publish_motor([t_signal, t_signal, t_signal, t_signal])
-		self.SetDropperPosition(t_signal)
+		#self.SetDropperPosition(t_signal)
+		self.SetManualRcInput(t_signal)
 		#self.SetPoint(np.array([0, 0, -10], dtype = np.float32))
 		
-		print("   ", "{:.2f}".format(t_signal))
+		print(self.is_armed)
 		#print(self.position, self.velocity, self.heading)
 
 	def SetDropperPosition(self, position_signal):
 		msg = VehicleCommand()
-		
-		if position_signal > 0:
-			position_signal = 1.0
-		else:
-			position_signal = 0.0
 
-		msg.command = VehicleCommand.VEHICLE_CMD_DO_GRIPPER
+		msg.command = VehicleCommand.VEHICLE_CMD_DO_SET_ACTUATOR 
+		msg.param1 = position_signal
 		msg.param2 = position_signal
+		msg.param3 = position_signal
+		msg.param4 = position_signal
+		msg.param5 = position_signal
+		msg.param6 = position_signal
+		msg.param7 = 0
 		
 		msg.timestamp = int(Clock().now().nanoseconds / 1000)
-		#msg.target_system = 1
-		#msg.target_component = 1
-		#msg.source_system = 1
-		#msg.source_component = 1
+		msg.target_system = 1
+		msg.target_component = 1
+		msg.source_system = 1
+		msg.source_component = 1
 		msg.from_external = True
 		
 		self.vehicle_command_publisher.publish(msg)
@@ -147,11 +146,11 @@ class RosController(Node):
 		msg = OffboardControlMode()
 		
 		msg.timestamp = int(Clock().now().nanoseconds / 1000)
-		msg.position = False
-		msg.velocity = False
-		msg.acceleration = False
-		msg.attitude = False
-		msg.body_rate = False
+		msg.position = True
+		msg.velocity = True
+		msg.acceleration = True
+		msg.attitude = True
+		msg.body_rate = True
 		msg.direct_actuator = True
 		
 		self.publisher_offboard_mode.publish(msg)
