@@ -72,6 +72,11 @@ class RosController(Node):
 		self.is_armed = False
 		self.position = torch.zeros((1, 3)).cuda()
 		self.velocity = torch.zeros((1, 3)).cuda()
+		
+		self.command_command = None
+		self.command_result = None
+		self.command_result_param1 = None
+		self.command_result_param2 = None
 
 		timer_period = 0.02
 		self.timer = self.create_timer(timer_period, self.Update)
@@ -99,7 +104,7 @@ class RosController(Node):
 		#self.SetManualRcInput(t_signal)
 		#self.SetPoint(np.array([0, 0, -10], dtype = np.float32))
 		
-		
+		print(self.command_command, self.command_result, self.command_result_param1, self.command_result_param2)
 		#print(self.position, self.velocity, self.heading)
 
 	def SetDropperPosition(self, position_signal):
@@ -197,8 +202,10 @@ class RosController(Node):
 		self.heading = msg.heading	
 	
 	def CommandAcknowledge(self, msg):
-		#self.heading = msg.heading
-		pass
+		self.command_command = msg.command
+		self.command_result = msg.result
+		self.command_result_param1 = msg.result_param1
+		self.command_result_param2 = msg.result_param2
 	
 	def ControlModeCallback(self, msg):
 		self.is_armed = msg.flag_armed
@@ -217,10 +224,14 @@ class RosController(Node):
 		self.thrust_publisher.publish(msg)
 		
 	def publish_motor(self, thrusts):
-		#msg = ActuatorMotors()
+		msg = ActuatorMotors()
 		
-		#msg.timestamp = int(Clock().now().nanoseconds / 1000)
-		#msg.control[0] = thrusts[0] * 0
+		thrust = thrusts[0]
+		thrust = min(0.7, thrust)
+		thrust = max(0.2, thrust)
+		
+		msg.timestamp = int(Clock().now().nanoseconds / 1000)
+		msg.control[0] = thrust
 		#msg.control[1] = thrusts[1] * 0
 		#msg.control[2] = thrusts[2] * 0
 		#msg.control[3] = thrusts[3] * 0
@@ -234,13 +245,13 @@ class RosController(Node):
 		#msg.control[10] = thrusts[0]
 		#msg.control[11] = thrusts[0]
 		
-		#self.motor_publisher.publish(msg)
+		self.motor_publisher.publish(msg)
 		
-		msg = ActuatorServos()
-		msg.timestamp = int(Clock().now().nanoseconds / 1000)
+		#msg = ActuatorServos()
+		#msg.timestamp = int(Clock().now().nanoseconds / 1000)
 		#msg.control = np.zeros(8, dtype = np.float32) + thrusts[0]
 		#msg.control[5] = thrusts[0]
-		msg.control = msg.control + (thrusts[0] * 1)
+		#msg.control = msg.control + (thrusts[0] * 1)
 		
-		self.servo_publisher.publish(msg)
+		#self.servo_publisher.publish(msg)
 		
