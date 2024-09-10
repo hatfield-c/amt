@@ -8,6 +8,7 @@ from rclpy.clock import Clock
 from rclpy.qos import QoSProfile, QoSReliabilityPolicy, QoSHistoryPolicy, QoSDurabilityPolicy
 
 from px4_msgs.msg import OffboardControlMode
+from px4_msgs.msg import ManualControlSetpoint
 from px4_msgs.msg import ActuatorMotors
 from px4_msgs.msg import ActuatorServos
 from px4_msgs.msg import VehicleAttitude
@@ -35,6 +36,7 @@ class RosController(Node):
 		self.publisher_offboard_mode = self.create_publisher(OffboardControlMode, '/fmu/in/offboard_control_mode', qos_profile)
 		self.motor_publisher = self.create_publisher(ActuatorMotors, "/fmu/in/actuator_motors", qos_profile)
 		self.servo_publisher = self.create_publisher(ActuatorServos, "/fmu/in/actuator_servos", qos_profile)
+		self.rc_spoofer_publisher = self.create_publisher(ManualControlSetpoint, "/fmu/in/manual_control_input", qos_profile)
 		self.vehicle_command_publisher = self.create_publisher(VehicleCommand, "/fmu/in/vehicle_command", qos_profile)
 		
 		self.quaternion = None
@@ -65,11 +67,51 @@ class RosController(Node):
 		
 		self.publish_motor([t_signal, t_signal, t_signal, t_signal])
 		#self.publish_motor([0.341, 0.341, 0.341, 0.341])
+		#self.SetDropperPosition(t_signal)
+		#self.SetManualRcInput(t_signal)
 		
 		if self.cycles > self.max_cycles:
 			self.publish_motor([0.0, 0, 0, 0])
 			self.SetArmed(0.0)
 			exit()
+
+	def SetDropperPosition(self, position_signal):
+		msg = VehicleCommand()
+
+		msg.command = VehicleCommand.VEHICLE_CMD_DO_SET_ACTUATOR 
+		msg.param1 = position_signal
+		msg.param2 = position_signal
+		msg.param3 = position_signal
+		msg.param4 = position_signal
+		msg.param5 = position_signal
+		msg.param6 = position_signal
+		msg.param7 = 0.0
+		
+		msg.timestamp = int(Clock().now().nanoseconds / 1000)
+		msg.target_system = 1
+		msg.target_component = 1
+		msg.source_system = 1
+		msg.source_component = 1
+		msg.from_external = True
+		
+		self.vehicle_command_publisher.publish(msg)
+		
+	def SetManualRcInput(self, position_signal):
+		msg = ManualControlSetpoint()
+		msg.timestamp = int(Clock().now().nanoseconds / 1000)
+		msg.roll = position_signal
+		msg.pitch = position_signal
+		msg.yaw = position_signal
+		msg.throttle = position_signal
+		
+		msg.aux1 = position_signal
+		msg.aux2 = position_signal
+		msg.aux3 = position_signal
+		msg.aux4 = position_signal
+		msg.aux5 = position_signal
+		msg.aux6 = position_signal
+		
+		self.rc_spoofer_publisher.publish(msg)
 
 	def PrepareToCommand(self):
 		msg = OffboardControlMode()
