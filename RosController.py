@@ -112,15 +112,7 @@ class RosController(Node):
 		orientation_q = msg.q
 
 		self.quaternion = orientation_q
-		
-	def publish_thrust(self, thrust):
-		msg = VehicleThrustSetpoint()
-		
-		msg.timestamp = int(Clock().now().nanoseconds / 1000)
-		msg.xyz = np.array([0, 0, 1], dtype = np.float32)
-	
-		self.thrust_publisher.publish(msg)
-		
+
 	def publish_motor(self, thrusts):
 		msg = ActuatorMotors()
 		
@@ -131,20 +123,20 @@ class RosController(Node):
 		msg.control[2] = thrusts[2]
 		msg.control[3] = thrusts[3]
 		
-		msg.control[4] = 0.3
-		msg.control[5] = 0.3
-		msg.control[6] = 0.3
-		msg.control[7] = 0.3
-		msg.control[8] = 0.3
-		msg.control[9] = 0.3
-		msg.control[10] = 0.3
-		msg.control[11] = 0.3
+		msg.control[4] = thrusts[0]
+		msg.control[5] = thrusts[0]
+		msg.control[6] = thrusts[0]
+		msg.control[7] = thrusts[0]
+		msg.control[8] = thrusts[0]
+		msg.control[9] = thrusts[0]
+		msg.control[10] = thrusts[0]
+		msg.control[11] = thrusts[0]
 		
 		self.motor_publisher.publish(msg)
 		
 		msg = ActuatorServos()
 		msg.timestamp = int(Clock().now().nanoseconds / 1000)
-		msg.control = np.zeros(8, dtype = np.float32) + 0.35
+		msg.control = np.zeros(8, dtype = np.float32) + thrusts[0]
 		
 		self.servo_publisher.publish(msg)
 
