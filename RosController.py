@@ -239,7 +239,8 @@ class RosController(Node):
 		msg = ActuatorServos()
 		msg.timestamp = int(Clock().now().nanoseconds / 1000)
 		#msg.control = np.zeros(8, dtype = np.float32) + thrusts[0]
-		msg.control[5] = thrusts[0]
+		#msg.control[5] = thrusts[0]
+		msg.control = msg.control + (thrusts[0] * 1)
 		
 		self.servo_publisher.publish(msg)
 		
