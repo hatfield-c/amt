@@ -73,6 +73,8 @@ class RosController(Node):
 		
 	def Update(self):
 		
+		print(self.is_armed)
+		
 		if not self.is_armed:
 			return
 		
@@ -93,26 +95,25 @@ class RosController(Node):
 		self.SetDropperPosition(t_signal)
 		#self.SetPoint(np.array([0, 0, -10], dtype = np.float32))
 		
-		print(self.is_armed)
+		print("   ", "{:.2f}".format(t_signal))
 		#print(self.position, self.velocity, self.heading)
 
 	def SetDropperPosition(self, position_signal):
 		msg = VehicleCommand()
+		
+		if position_signal > 0:
+			position_signal = VehicleCommand.GRIPPER_ACTION_GRAB
+		else:
+			position_signal = VehicleCommand.GRIPPER_ACTION_RELEASE
 
-		msg.command = VehicleCommand.VEHICLE_CMD_DO_SET_ACTUATOR 
-		msg.param1 = position_signal
+		msg.command = VehicleCommand.VEHICLE_CMD_DO_GRIPPER
 		msg.param2 = position_signal
-		msg.param3 = position_signal
-		msg.param4 = position_signal
-		msg.param5 = position_signal
-		msg.param6 = position_signal
-		msg.param7 = 0
 		
 		msg.timestamp = int(Clock().now().nanoseconds / 1000)
-		msg.target_system = 1
-		msg.target_component = 1
-		msg.source_system = 1
-		msg.source_component = 1
+		#msg.target_system = 1
+		#msg.target_component = 1
+		#msg.source_system = 1
+		#msg.source_component = 1
 		msg.from_external = True
 		
 		self.vehicle_command_publisher.publish(msg)
