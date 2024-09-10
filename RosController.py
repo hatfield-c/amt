@@ -45,12 +45,12 @@ class RosController(Node):
 			qos_profile
 		)
 		
-		self.command_ack_sub = self.create_subscription(
-			VehicleCommandAck,
-			'/fmu/out/vehicle_command_ack',
-			self.CommandAcknowledge,
-			qos_profile
-		)
+		#self.command_ack_sub = self.create_subscription(
+		#	VehicleCommandAck,
+		#	'/fmu/out/vehicle_command_ack',
+		#	self.CommandAcknowledge,
+		#	qos_profile
+		#)
 		
 		self.control_mode_sub = self.create_subscription(
 			VehicleControlMode,
@@ -61,10 +61,10 @@ class RosController(Node):
 		
 		self.publisher_offboard_mode = self.create_publisher(OffboardControlMode, '/fmu/in/offboard_control_mode', qos_profile)
 		
-		self.setpoint_publisher = self.create_publisher(GotoSetpoint, "/fmu/in/goto_setpoint", qos_profile)
-		self.rc_spoofer_publisher = self.create_publisher(ManualControlSetpoint, "/fmu/in/manual_control_input", qos_profile)
+		#self.setpoint_publisher = self.create_publisher(GotoSetpoint, "/fmu/in/goto_setpoint", qos_profile)
+		#self.rc_spoofer_publisher = self.create_publisher(ManualControlSetpoint, "/fmu/in/manual_control_input", qos_profile)
 		self.motor_publisher = self.create_publisher(ActuatorMotors, "/fmu/in/actuator_motors", qos_profile)
-		self.servo_publisher = self.create_publisher(ActuatorServos, "/fmu/in/actuator_servos", qos_profile)
+		#self.servo_publisher = self.create_publisher(ActuatorServos, "/fmu/in/actuator_servos", qos_profile)
 		self.vehicle_command_publisher = self.create_publisher(VehicleCommand, "/fmu/in/vehicle_command", qos_profile)
 		
 		self.quaternion = None
@@ -231,19 +231,19 @@ class RosController(Node):
 		thrust = max(0.2, thrust)
 		
 		msg.timestamp = int(Clock().now().nanoseconds / 1000)
-		msg.control[0] = thrust
-		#msg.control[1] = thrusts[1] * 0
-		#msg.control[2] = thrusts[2] * 0
-		#msg.control[3] = thrusts[3] * 0
+		msg.control[0] = 0.55#thrust
+		msg.control[1] = 0.55#thrusts[1] * 0
+		msg.control[2] = 0.55#thrusts[2] * 0
+		msg.control[3] = 0.55#thrusts[3] * 0
 		
-		#msg.control[4] = thrusts[0]
-		#msg.control[5] = thrusts[0]
-		#msg.control[6] = thrusts[0]
-		#msg.control[7] = thrusts[0]
-		#msg.control[8] = thrusts[0]
-		#msg.control[9] = thrusts[0]
-		#msg.control[10] = thrusts[0]
-		#msg.control[11] = thrusts[0]
+		msg.control[4] = thrusts[0]
+		msg.control[5] = thrusts[0]
+		msg.control[6] = thrusts[0]
+		msg.control[7] = thrusts[0]
+		msg.control[8] = thrusts[0]
+		msg.control[9] = thrusts[0]
+		msg.control[10] = thrusts[0]
+		msg.control[11] = thrusts[0]
 		
 		self.motor_publisher.publish(msg)
 		
