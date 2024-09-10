@@ -45,7 +45,7 @@ class RosController(Node):
 		self.timer = self.create_timer(timer_period, self.Update)
 		
 		self.cycles = 0
-		self.max_cycles = 100
+		self.max_cycles = 10000
 		
 	def Update(self):
 		self.cycles += 1
