@@ -102,9 +102,9 @@ class RosController(Node):
 		msg = VehicleCommand()
 		
 		if position_signal > 0:
-			position_signal = VehicleCommand.GRIPPER_ACTION_GRAB
+			position_signal = 1.0
 		else:
-			position_signal = VehicleCommand.GRIPPER_ACTION_RELEASE
+			position_signal = 0.0
 
 		msg.command = VehicleCommand.VEHICLE_CMD_DO_GRIPPER
 		msg.param2 = position_signal
