@@ -197,7 +197,8 @@ class RosController(Node):
 		self.heading = msg.heading	
 	
 	def CommandAcknowledge(self, msg):
-		self.heading = msg.heading
+		#self.heading = msg.heading
+		pass
 	
 	def ControlModeCallback(self, msg):
 		self.is_armed = msg.flag_armed
