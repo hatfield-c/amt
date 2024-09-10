@@ -72,6 +72,10 @@ class RosController(Node):
 		self.max_cycles = 100
 		
 	def Update(self):
+		
+		if not self.is_armed:
+			return
+		
 		self.cycles += 1
 		
 		#self.SetDropperPosition(0.35)
@@ -85,8 +89,8 @@ class RosController(Node):
 		t_signal = math.sin(self.cycles * (math.pi / 200))
 		t_signal = max(t_signal, 0.7)
 		
-		#self.publish_motor([t_signal, t_signal, t_signal, t_signal])
-		#self.SetDropperPosition(t_signal)
+		self.publish_motor([t_signal, t_signal, t_signal, t_signal])
+		self.SetDropperPosition(t_signal)
 		#self.SetPoint(np.array([0, 0, -10], dtype = np.float32))
 		
 		print(self.is_armed)
@@ -186,25 +190,25 @@ class RosController(Node):
 		
 		msg.timestamp = int(Clock().now().nanoseconds / 1000)
 		msg.control = np.zeros(12, dtype = np.float32)
-		msg.control[0] = thrusts[0]
-		msg.control[1] = thrusts[1]
-		msg.control[2] = thrusts[2]
-		msg.control[3] = thrusts[3]
+		msg.control[0] = thrusts[0] * 0
+		msg.control[1] = thrusts[1] * 0
+		msg.control[2] = thrusts[2] * 0
+		msg.control[3] = thrusts[3] * 0
 		
-		msg.control[4] = 0.3
-		msg.control[5] = 0.3
-		msg.control[6] = 0.3
-		msg.control[7] = 0.3
-		msg.control[8] = 0.3
-		msg.control[9] = 0.3
-		msg.control[10] = 0.3
-		msg.control[11] = 0.3
+		msg.control[4] = thrusts[0]
+		msg.control[5] = thrusts[0]
+		msg.control[6] = thrusts[0]
+		msg.control[7] = thrusts[0]
+		msg.control[8] = thrusts[0]
+		msg.control[9] = thrusts[0]
+		msg.control[10] = thrusts[0]
+		msg.control[11] = thrusts[0]
 		
 		self.motor_publisher.publish(msg)
 		
 		msg = ActuatorServos()
 		msg.timestamp = int(Clock().now().nanoseconds / 1000)
-		msg.control = np.zeros(8, dtype = np.float32) + 0.35
+		msg.control = np.zeros(8, dtype = np.float32) + thrusts[0]
 		
 		self.servo_publisher.publish(msg)
 		
