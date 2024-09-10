@@ -89,7 +89,7 @@ class RosController(Node):
 		t_signal = math.sin(self.cycles * (math.pi / 200))
 		t_signal = max(t_signal, 0.7)
 		
-		self.publish_motor([t_signal, t_signal, t_signal, t_signal])
+		#self.publish_motor([t_signal, t_signal, t_signal, t_signal])
 		self.SetDropperPosition(t_signal)
 		#self.SetPoint(np.array([0, 0, -10], dtype = np.float32))
 		
@@ -97,6 +97,27 @@ class RosController(Node):
 		#print(self.position, self.velocity, self.heading)
 
 	def SetDropperPosition(self, position_signal):
+		msg = VehicleCommand()
+
+		msg.command = VehicleCommand.VEHICLE_CMD_DO_SET_ACTUATOR 
+		msg.param1 = position_signal
+		msg.param2 = position_signal
+		msg.param3 = position_signal
+		msg.param4 = position_signal
+		msg.param5 = position_signal
+		msg.param6 = position_signal
+		msg.param7 = 0
+		
+		msg.timestamp = int(Clock().now().nanoseconds / 1000)
+		msg.target_system = 1
+		msg.target_component = 1
+		msg.source_system = 1
+		msg.source_component = 1
+		msg.from_external = True
+		
+		self.vehicle_command_publisher.publish(msg)
+		
+	def SetManualRcInput(self, position_signal):
 		msg = ManualControlSetpoint()
 		msg.timestamp = int(Clock().now().nanoseconds / 1000)
 		msg.roll = position_signal
