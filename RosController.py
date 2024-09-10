@@ -231,19 +231,20 @@ class RosController(Node):
 		thrust = max(0.2, thrust)
 		
 		msg.timestamp = int(Clock().now().nanoseconds / 1000)
+		msg.control = np.zeros(12, dtype = np.float32)
 		msg.control[0] = 0.55#thrust
 		msg.control[1] = 0.55#thrusts[1] * 0
 		msg.control[2] = 0.55#thrusts[2] * 0
 		msg.control[3] = 0.55#thrusts[3] * 0
 		
-		msg.control[4] = thrusts[0]
-		msg.control[5] = thrusts[0]
-		msg.control[6] = thrusts[0]
-		msg.control[7] = thrusts[0]
-		msg.control[8] = thrusts[0]
-		msg.control[9] = thrusts[0]
-		msg.control[10] = thrusts[0]
-		msg.control[11] = thrusts[0]
+		msg.control[4] = 0.55#thrusts[0]
+		msg.control[5] = 0.55#thrusts[0]
+		msg.control[6] = 0.55#thrusts[0]
+		msg.control[7] = 0.55#thrusts[0]
+		msg.control[8] = 0.55#thrusts[0]
+		msg.control[9] = 0.55#thrusts[0]
+		msg.control[10] = 0.55#thrusts[0]
+		msg.control[11] = 0.55#thrusts[0]
 		
 		self.motor_publisher.publish(msg)
 		
