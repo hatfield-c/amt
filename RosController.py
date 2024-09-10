@@ -1,4 +1,5 @@
 import time
+import math
 
 import rclpy
 from rclpy.node import Node
@@ -55,7 +56,13 @@ class RosController(Node):
 			self.SetArmed(1.0)
 			return
 		
-		self.publish_motor([0.341, 0.341, 0.341, 0.341])
+		t_signal =  (math.sin(self.cycles * (math.pi / 200)) + 1) / 2
+		
+		t_signal = min(t_signal, 0.7)
+		t_signal = max(t_signal, 0.2)
+		
+		self.publish_motor([t_signal, t_signal, t_signal, t_signal])
+		#self.publish_motor([0.341, 0.341, 0.341, 0.341])
 		
 		if self.cycles > self.max_cycles:
 			self.publish_motor([0.0, 0, 0, 0])
