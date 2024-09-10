@@ -56,10 +56,12 @@ class RosController(Node):
 			self.SetArmed(1.0)
 			return
 		
-		t_signal =  (math.sin(self.cycles * (math.pi / 200)) + 1) / 2
+		t_signal =  (math.sin(self.cycles * (math.pi / 100)) + 1) / 2
 		
-		t_signal = min(t_signal, 0.7)
-		t_signal = max(t_signal, 0.2)
+		if t_signal > 0.5:
+			t_signal = 0.7
+		else:
+			t_signal = 0.2
 		
 		self.publish_motor([t_signal, t_signal, t_signal, t_signal])
 		#self.publish_motor([0.341, 0.341, 0.341, 0.341])
