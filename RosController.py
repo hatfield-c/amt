@@ -11,6 +11,7 @@ from rclpy.qos import QoSProfile, QoSReliabilityPolicy, QoSHistoryPolicy, QoSDur
 from px4_msgs.msg import OffboardControlMode
 from px4_msgs.msg import ManualControlSetpoint
 from px4_msgs.msg import GotoSetpoint
+from px4_msgs.msg import VehicleControlMode
 from px4_msgs.msg import ActuatorMotors
 from px4_msgs.msg import ActuatorServos
 from px4_msgs.msg import VehicleAttitude
@@ -43,6 +44,13 @@ class RosController(Node):
 			qos_profile
 		)
 		
+		self.control_mode_sub = self.create_subscription(
+			VehicleControlMode,
+			'/fmu/out/vehicle_control_mode',
+			self.ControlModeCallback,
+			qos_profile
+		)
+		
 		self.publisher_offboard_mode = self.create_publisher(OffboardControlMode, '/fmu/in/offboard_control_mode', qos_profile)
 		
 		self.setpoint_publisher = self.create_publisher(GotoSetpoint, "/fmu/in/goto_setpoint", qos_profile)
@@ -53,6 +61,7 @@ class RosController(Node):
 		
 		self.quaternion = None
 		self.heading = None
+		self.is_armed = False
 		self.position = torch.zeros((1, 3)).cuda()
 		self.velocity = torch.zeros((1, 3)).cuda()
 
@@ -78,9 +87,10 @@ class RosController(Node):
 		
 		#self.publish_motor([t_signal, t_signal, t_signal, t_signal])
 		#self.SetDropperPosition(t_signal)
-		self.SetPoint(np.array([0, 0, -10], dtype = np.float32))
+		#self.SetPoint(np.array([0, 0, -10], dtype = np.float32))
 		
-		print(self.position, self.velocity, self.heading)
+		print(self.is_armed)
+		#print(self.position, self.velocity, self.heading)
 
 	def SetDropperPosition(self, position_signal):
 		msg = ManualControlSetpoint()
@@ -143,7 +153,7 @@ class RosController(Node):
 			msg.timestamp = int(Clock().now().nanoseconds / 1000)
 			
 			self.vehicle_command_publisher.publish(msg)
-		
+	
 	def PositionCallback(self, msg):
 		self.position[0, 0] = msg.x
 		self.position[0, 1] = msg.y
@@ -153,7 +163,10 @@ class RosController(Node):
 		self.velocity[0, 1] = msg.vy
 		self.velocity[0, 2] = msg.vz
 		
-		self.heading = msg.heading
+		self.heading = msg.heading	
+	
+	def ControlModeCallback(self, msg):
+		self.is_armed = msg.flag_armed
 		
 	def AttitudeCallback(self, msg):
 		orientation_q = msg.q
