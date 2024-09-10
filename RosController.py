@@ -17,6 +17,7 @@ from px4_msgs.msg import ActuatorServos
 from px4_msgs.msg import VehicleAttitude
 from px4_msgs.msg import VehicleLocalPosition
 from px4_msgs.msg import VehicleCommand
+from px4_msgs.msg import VehicleCommandAck
 from px4_msgs.msg import VehicleThrustSetpoint
 
 class RosController(Node):
@@ -41,6 +42,13 @@ class RosController(Node):
 			VehicleLocalPosition,
 			'/fmu/out/vehicle_local_position',
 			self.PositionCallback,
+			qos_profile
+		)
+		
+		self.command_ack_sub = self.create_subscription(
+			VehicleCommandAck,
+			'/fmu/out/vehicle_command_ack',
+			self.CommandAcknowledge,
 			qos_profile
 		)
 		
@@ -104,7 +112,7 @@ class RosController(Node):
 		msg.param4 = position_signal
 		msg.param5 = position_signal
 		msg.param6 = position_signal
-		msg.param7 = 0
+		msg.param7 = 0.0
 		
 		msg.timestamp = int(Clock().now().nanoseconds / 1000)
 		msg.target_system = 1
@@ -144,11 +152,11 @@ class RosController(Node):
 		msg = OffboardControlMode()
 		
 		msg.timestamp = int(Clock().now().nanoseconds / 1000)
-		#msg.position = True
-		#msg.velocity = True
-		#msg.acceleration = True
-		#msg.attitude = True
-		#msg.body_rate = True
+		msg.position = False
+		msg.velocity = False
+		msg.acceleration = False
+		msg.attitude = False
+		msg.body_rate = False
 		msg.direct_actuator = True
 		
 		self.publisher_offboard_mode.publish(msg)
@@ -188,6 +196,9 @@ class RosController(Node):
 		
 		self.heading = msg.heading	
 	
+	def CommandAcknowledge(self, msg):
+		self.heading = msg.heading
+	
 	def ControlModeCallback(self, msg):
 		self.is_armed = msg.flag_armed
 		
@@ -205,29 +216,29 @@ class RosController(Node):
 		self.thrust_publisher.publish(msg)
 		
 	def publish_motor(self, thrusts):
-		msg = ActuatorMotors()
+		#msg = ActuatorMotors()
 		
-		msg.timestamp = int(Clock().now().nanoseconds / 1000)
-		msg.control = np.zeros(12, dtype = np.float32)
-		msg.control[0] = thrusts[0] * 0
-		msg.control[1] = thrusts[1] * 0
-		msg.control[2] = thrusts[2] * 0
-		msg.control[3] = thrusts[3] * 0
+		#msg.timestamp = int(Clock().now().nanoseconds / 1000)
+		#msg.control[0] = thrusts[0] * 0
+		#msg.control[1] = thrusts[1] * 0
+		#msg.control[2] = thrusts[2] * 0
+		#msg.control[3] = thrusts[3] * 0
 		
-		msg.control[4] = thrusts[0]
-		msg.control[5] = thrusts[0]
-		msg.control[6] = thrusts[0]
-		msg.control[7] = thrusts[0]
-		msg.control[8] = thrusts[0]
-		msg.control[9] = thrusts[0]
-		msg.control[10] = thrusts[0]
-		msg.control[11] = thrusts[0]
+		#msg.control[4] = thrusts[0]
+		#msg.control[5] = thrusts[0]
+		#msg.control[6] = thrusts[0]
+		#msg.control[7] = thrusts[0]
+		#msg.control[8] = thrusts[0]
+		#msg.control[9] = thrusts[0]
+		#msg.control[10] = thrusts[0]
+		#msg.control[11] = thrusts[0]
 		
 		#self.motor_publisher.publish(msg)
 		
 		msg = ActuatorServos()
 		msg.timestamp = int(Clock().now().nanoseconds / 1000)
-		msg.control = np.zeros(8, dtype = np.float32) + thrusts[0]
+		#msg.control = np.zeros(8, dtype = np.float32) + thrusts[0]
+		msg.control[5] = thrusts[0]
 		
 		self.servo_publisher.publish(msg)
 		
