@@ -78,9 +78,9 @@ class RosController(Node):
 		
 		self.PrepareToCommand()
 	
-		if self.cycles < 10:
-			self.SetArmed(1.0)
-			return
+		#if self.cycles < 10:
+		#	self.SetArmed(1.0)
+		#	return
 		
 		t_signal = math.sin(self.cycles * (math.pi / 200))
 		t_signal = max(t_signal, 0.7)
