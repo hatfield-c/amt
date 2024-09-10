@@ -73,6 +73,10 @@ class RosController(Node):
 		
 	def Update(self):
 		
+		self.PrepareToCommand()
+		
+		print("[Armed]:", self.is_armed)
+		
 		if not self.is_armed:
 			return
 		
@@ -80,20 +84,14 @@ class RosController(Node):
 		
 		#self.SetDropperPosition(0.35)
 		
-		self.PrepareToCommand()
-	
-		#if self.cycles < 10:
-		#	self.SetArmed(1.0)
-		#	return
+		t_signal =  (math.sin(self.cycles * (math.pi / 200)) + 1) / 2
 		
-		t_signal = math.sin(self.cycles * (math.pi / 200))
-		
-		#self.publish_motor([t_signal, t_signal, t_signal, t_signal])
+		self.publish_motor([t_signal, t_signal, t_signal, t_signal])
 		#self.SetDropperPosition(t_signal)
-		self.SetManualRcInput(t_signal)
+		#self.SetManualRcInput(t_signal)
 		#self.SetPoint(np.array([0, 0, -10], dtype = np.float32))
 		
-		print(self.is_armed)
+		
 		#print(self.position, self.velocity, self.heading)
 
 	def SetDropperPosition(self, position_signal):
@@ -146,11 +144,11 @@ class RosController(Node):
 		msg = OffboardControlMode()
 		
 		msg.timestamp = int(Clock().now().nanoseconds / 1000)
-		msg.position = True
-		msg.velocity = True
-		msg.acceleration = True
-		msg.attitude = True
-		msg.body_rate = True
+		#msg.position = True
+		#msg.velocity = True
+		#msg.acceleration = True
+		#msg.attitude = True
+		#msg.body_rate = True
 		msg.direct_actuator = True
 		
 		self.publisher_offboard_mode.publish(msg)
@@ -225,7 +223,7 @@ class RosController(Node):
 		msg.control[10] = thrusts[0]
 		msg.control[11] = thrusts[0]
 		
-		self.motor_publisher.publish(msg)
+		#self.motor_publisher.publish(msg)
 		
 		msg = ActuatorServos()
 		msg.timestamp = int(Clock().now().nanoseconds / 1000)
