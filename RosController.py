@@ -124,7 +124,7 @@ class RosController(Node):
 		msg_is_offboard = msg.flag_control_offboard_enabled
 		
 		if msg_is_armed and not self.is_armed:
-			self.SwitchDropper()
+			pass
 			
 		if not msg_is_armed and self.is_armed:
 			self.current_state = "warmup"
