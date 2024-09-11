@@ -13,16 +13,28 @@ from px4_msgs.msg import OffboardControlMode
 from px4_msgs.msg import GotoSetpoint
 from px4_msgs.msg import VehicleControlMode
 from px4_msgs.msg import VehicleCommand
+from px4_msgs.msg import VehicleLocalPosition
 
 class RosController(Node):
 
 	def __init__(self):
 		super().__init__('minimal_publisher')
+		
+		self.desired_height = 1
+		self.desired_distance = 1
+		
 		qos_profile = QoSProfile(
 			reliability = QoSReliabilityPolicy.BEST_EFFORT,
 			durability = QoSDurabilityPolicy.TRANSIENT_LOCAL,
 			history = QoSHistoryPolicy.KEEP_LAST,
 			depth = 1
+		)
+		
+		self.position_sub = self.create_subscription(
+			VehicleLocalPosition,
+			'/fmu/out/vehicle_local_position',
+			self.PositionCallback,
+			qos_profile
 		)
 		
 		self.control_mode_sub = self.create_subscription(
@@ -40,6 +52,10 @@ class RosController(Node):
 		
 		self.is_armed = False
 		self.is_offboard = False
+		
+		self.heading = 0
+		self.position = np.zeros(3, dtype = np.float32)
+		self.velocity = np.zeros(3, dtype = np.float32)
 
 		timer_period = 0.02
 		self.timer = self.create_timer(timer_period, self.Update)
@@ -51,7 +67,7 @@ class RosController(Node):
 	def Update(self):
 		self.PrepareToCommand()
 		
-		print("[Activated]:", self.is_armed and self.is_offboard)
+		#print("[Activated]:", self.is_armed and self.is_offboard)
 		
 		if not self.is_armed or not self.is_offboard:
 			return
@@ -67,7 +83,8 @@ class RosController(Node):
 			if self.cycles > 1000:
 				self.current_state = "takeoff"
 		elif self.current_state == "takeoff":
-			pass
+			#self.GotoPoint(np.array([0, 0, 0], dtype = np.float32))
+			print(self.position)
 		elif self.current_state == "flight":
 			pass
 		elif self.current_state == "idle":
@@ -86,6 +103,14 @@ class RosController(Node):
 			msg.velocity = False
 		
 		self.publisher_offboard_mode.publish(msg)
+
+	def GotoPoint(self, position):
+		msg = GotoSetpoint()
+		msg.timestamp = int(Clock().now().nanoseconds / 1000)
+		msg.position = position
+		msg.heading = 0
+		
+		self.setpoint_publisher.publish(msg)
 
 	def SetDropper(self, is_closed):
 		servo_signal = -1.0
@@ -118,6 +143,17 @@ class RosController(Node):
 		msg.control[3] = warmup_throttle
 		
 		self.motor_publisher.publish(msg)
+
+	def PositionCallback(self, msg):
+		self.position[0, 0] = msg.x
+		self.position[0, 1] = msg.y
+		self.position[0, 2] = msg.z
+		
+		self.velocity[0, 0] = msg.vx
+		self.velocity[0, 1] = msg.vy
+		self.velocity[0, 2] = msg.vz
+		
+		self.heading = msg.heading	
 
 	def ControlModeCallback(self, msg):
 		msg_is_armed = msg.flag_armed
