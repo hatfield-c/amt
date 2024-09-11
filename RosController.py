@@ -145,13 +145,13 @@ class RosController(Node):
 		self.motor_publisher.publish(msg)
 
 	def PositionCallback(self, msg):
-		self.position[0, 0] = msg.x
-		self.position[0, 1] = msg.y
-		self.position[0, 2] = msg.z
+		self.position[0] = msg.x
+		self.position[1] = msg.y
+		self.position[2] = msg.z
 		
-		self.velocity[0, 0] = msg.vx
-		self.velocity[0, 1] = msg.vy
-		self.velocity[0, 2] = msg.vz
+		self.velocity[0] = msg.vx
+		self.velocity[1] = msg.vy
+		self.velocity[2] = msg.vz
 		
 		self.heading = msg.heading	
 
