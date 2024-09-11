@@ -80,7 +80,7 @@ class RosController(Node):
 		if self.current_state == "warmup":
 			self.WarmUp()
 			
-			if self.cycles > 1000:
+			if self.cycles > 300:
 				self.current_state = "takeoff"
 		elif self.current_state == "takeoff":
 			#self.GotoPoint(np.array([0, 0, 0], dtype = np.float32))
@@ -99,8 +99,8 @@ class RosController(Node):
 			msg.direct_actuator = True
 			
 		if self.current_state in ["takeoff", "flight", "idle"]:
-			msg.position = False
-			msg.velocity = False
+			msg.position = True
+			msg.velocity = True
 		
 		self.publisher_offboard_mode.publish(msg)
 
