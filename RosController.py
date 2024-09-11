@@ -89,7 +89,7 @@ class RosController(Node):
 		self.SetDropper(self.is_dropper_closed)
 		
 	def SetDropper(self, is_closed):
-		servo_signal = 0.0
+		servo_signal = -1.0
 		if is_closed:
 			servo_signal = 1.0
 		
