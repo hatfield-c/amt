@@ -7,13 +7,12 @@ import numpy as np
 from rclpy.clock import Clock
 from rclpy.qos import QoSProfile, QoSReliabilityPolicy, QoSHistoryPolicy, QoSDurabilityPolicy
 
-from px4_msgs.msg import OffboardControlMode
-from px4_msgs.msg import ManualControlSetpoint
 from px4_msgs.msg import ActuatorMotors
 from px4_msgs.msg import ActuatorServos
+from px4_msgs.msg import OffboardControlMode
+from px4_msgs.msg import GotoSetpoint
 from px4_msgs.msg import VehicleControlMode
 from px4_msgs.msg import VehicleCommand
-from px4_msgs.msg import VehicleThrustSetpoint
 
 class RosController(Node):
 
@@ -34,60 +33,60 @@ class RosController(Node):
 		)
 		
 		self.publisher_offboard_mode = self.create_publisher(OffboardControlMode, '/fmu/in/offboard_control_mode', qos_profile)
-		self.servo_publisher = self.create_publisher(ActuatorServos, "/fmu/in/actuator_servos", qos_profile)
-		self.rc_spoofer_publisher = self.create_publisher(ManualControlSetpoint, "/fmu/in/manual_control_input", qos_profile)
 		self.vehicle_command_publisher = self.create_publisher(VehicleCommand, "/fmu/in/vehicle_command", qos_profile)
+		self.setpoint_publisher = self.create_publisher(GotoSetpoint, "/fmu/in/goto_setpoint", qos_profile)
+		self.motor_publisher = self.create_publisher(ActuatorMotors, "/fmu/in/actuator_motors", qos_profile)
+		self.servo_publisher = self.create_publisher(ActuatorServos, "/fmu/in/actuator_servos", qos_profile)
 		
-		self.quaternion = None
-		self.heading = None
 		self.is_armed = False
-		self.is_dropper_closed = False
 		self.is_offboard = False
 
 		timer_period = 0.02
 		self.timer = self.create_timer(timer_period, self.Update)
 		
 		self.cycles = 0
-		self.max_cycles = 10000
+		
+		self.current_state = "warmup"
 		
 	def Update(self):
 		self.PrepareToCommand()
 		
-		print("[Armed]:", self.is_armed)
+		print("[Activated]:", self.is_armed and self.is_offboard)
 		
-		if not self.is_armed:
+		if not self.is_armed or not self.is_offboard:
 			return
 		
+		self.TakeAction()
+		
 		self.cycles += 1
+
+	def TakeAction(self):
+		if self.current_state == "warmup":
+			self.WarmUp()
+			
+			if self.cycles > 1000:
+				self.current_state = "takeoff"
+		elif self.current_state == "takeoff":
+			pass
+		elif self.current_state == "flight":
+			pass
+		elif self.current_state == "idle":
+			pass
 
 	def PrepareToCommand(self):
 		msg = OffboardControlMode()
 		
 		msg.timestamp = int(Clock().now().nanoseconds / 1000)
-		msg.position = False
-		msg.velocity = False
-		msg.acceleration = False
-		msg.attitude = False
-		msg.body_rate = False
-		msg.direct_actuator = True
+		
+		if self.current_state == "warmup":
+			msg.direct_actuator = True
+			
+		if self.current_state in ["takeoff", "flight", "idle"]:
+			msg.position = False
+			msg.velocity = False
 		
 		self.publisher_offboard_mode.publish(msg)
 
-	def ControlModeCallback(self, msg):
-		msg_is_armed = msg.flag_armed
-		msg_is_offboard = msg.flag_control_offboard_enabled
-		
-		if msg_is_armed and not self.is_armed:
-			self.SwitchDropper()
-		
-		self.is_armed = msg_is_armed
-		self.is_offboard = msg_is_offboard
-		
-	def SwitchDropper(self):
-		self.is_dropper_closed = not self.is_dropper_closed
-		
-		self.SetDropper(self.is_dropper_closed)
-		
 	def SetDropper(self, is_closed):
 		servo_signal = -1.0
 		if is_closed:
@@ -106,6 +105,33 @@ class RosController(Node):
 		msg.from_external = True
 		
 		self.vehicle_command_publisher.publish(msg)
+
+	def WarmUp(self):
+		warmup_throttle = 0.2
+		
+		msg = ActuatorMotors()		
+		
+		msg.timestamp = int(Clock().now().nanoseconds / 1000)
+		msg.control[0] = warmup_throttle
+		msg.control[1] = warmup_throttle
+		msg.control[2] = warmup_throttle
+		msg.control[3] = warmup_throttle
+		
+		self.motor_publisher.publish(msg)
+
+	def ControlModeCallback(self, msg):
+		msg_is_armed = msg.flag_armed
+		msg_is_offboard = msg.flag_control_offboard_enabled
+		
+		if msg_is_armed and not self.is_armed:
+			self.SwitchDropper()
+			
+		if not msg_is_armed and self.is_armed:
+			self.current_state = "warmup"
+			self.cycles = 0
+		
+		self.is_armed = msg_is_armed
+		self.is_offboard = msg_is_offboard
 
 '''
 import time
