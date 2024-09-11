@@ -97,12 +97,6 @@ class RosController(Node):
 
 		msg.command = VehicleCommand.VEHICLE_CMD_DO_SET_ACTUATOR 
 		msg.param1 = servo_signal
-		msg.param2 = servo_signal
-		msg.param3 = servo_signal
-		msg.param4 = servo_signal
-		msg.param5 = servo_signal
-		msg.param6 = servo_signal
-		msg.param7 = 0.0
 		
 		msg.timestamp = int(Clock().now().nanoseconds / 1000)
 		msg.target_system = 1
