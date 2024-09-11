@@ -56,6 +56,8 @@ class RosController(Node):
 		self.heading = 0
 		self.position = np.zeros(3, dtype = np.float32)
 		self.velocity = np.zeros(3, dtype = np.float32)
+		
+		self.desired_position = np.zeros(3, dtype = np.float32)
 
 		timer_period = 0.02
 		self.timer = self.create_timer(timer_period, self.Update)
@@ -80,13 +82,18 @@ class RosController(Node):
 		if self.current_state == "warmup":
 			self.WarmUp()
 			
-			if self.cycles > 300:
+			if self.cycles > 200:
 				self.current_state = "takeoff"
+				
 		elif self.current_state == "takeoff":
-			#self.GotoPoint(np.array([0, 0, 0], dtype = np.float32))
-			print(self.position)
+			self.GotoPoint(np.array([0, 0, -self.desired_height], dtype = np.float32))
+			
+			if self.position[2] > self.desired_height:
+				self.current_state = "flight"
+				
 		elif self.current_state == "flight":
-			pass
+			print(self.desired_position)
+		
 		elif self.current_state == "idle":
 			pass
 
@@ -147,11 +154,11 @@ class RosController(Node):
 	def PositionCallback(self, msg):
 		self.position[0] = msg.x
 		self.position[1] = msg.y
-		self.position[2] = msg.z
+		self.position[2] = -msg.z
 		
 		self.velocity[0] = msg.vx
 		self.velocity[1] = msg.vy
-		self.velocity[2] = msg.vz
+		self.velocity[2] = -msg.vz
 		
 		self.heading = msg.heading	
 
@@ -159,12 +166,22 @@ class RosController(Node):
 		msg_is_armed = msg.flag_armed
 		msg_is_offboard = msg.flag_control_offboard_enabled
 		
-		if msg_is_armed and not self.is_armed:
-			pass
-			
-		if not msg_is_armed and self.is_armed:
+		if msg_is_offboard and not self.is_offboard:
 			self.current_state = "warmup"
 			self.cycles = 0
+			
+			forward_direction = np.array([
+				math.cos(self.heading),
+				math.sin(self.heading)
+			])
+			
+			forward_xy_position = forward_direction * self.desired_distance
+			self.desired_position = np.concatenate(
+				(
+					forward_xy_position, 
+					np.array([self.desired_height])
+				)
+			)
 		
 		self.is_armed = msg_is_armed
 		self.is_offboard = msg_is_offboard
