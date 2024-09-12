@@ -73,6 +73,7 @@ class RosController(Node):
 		self.PrepareToCommand()
 		
 		#print("[Activated]:", self.is_armed and self.is_offboard)
+		print(self.desired_heading, self.heading)
 		
 		if not self.is_armed or not self.is_offboard:
 			return
