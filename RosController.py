@@ -57,6 +57,7 @@ class RosController(Node):
 		self.position = np.zeros(3, dtype = np.float32)
 		self.velocity = np.zeros(3, dtype = np.float32)
 		
+		self.position_offset = np.zeros(3, dtype = np.float32)
 		self.desired_position = np.zeros(3, dtype = np.float32)
 		self.desired_heading = 0.0
 
@@ -159,9 +160,9 @@ class RosController(Node):
 		self.motor_publisher.publish(msg)
 
 	def PositionCallback(self, msg):
-		self.position[0] = msg.x
-		self.position[1] = msg.y
-		self.position[2] = -msg.z
+		self.position[0] = msg.x - self.position_offset[0]
+		self.position[1] = msg.y - self.position_offset[1]
+		self.position[2] = -(msg.z - self.position_offset[2])
 		
 		self.velocity[0] = msg.vx
 		self.velocity[1] = msg.vy
@@ -176,6 +177,7 @@ class RosController(Node):
 		if msg_is_offboard and not self.is_offboard:
 			self.current_state = "warmup"
 			self.cycles = 0
+			self.position_offset = self.position
 			
 			forward_direction = np.array([
 				math.cos(self.heading),
