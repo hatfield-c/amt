@@ -20,7 +20,7 @@ class RosController(Node):
 	def __init__(self):
 		super().__init__('minimal_publisher')
 		
-		self.takeoff_duration = 3
+		self.takeoff_duration = 4
 		self.flight_duration = 5
 		self.fixed_heading = 1.55
 		
@@ -97,9 +97,8 @@ class RosController(Node):
 			self.SetTrajectory(np.array([0, 0, -self.takeoff_speed], dtype = np.float32), self.fixed_heading)
 			
 			if time.time() - self.takeoff_start_time > self.takeoff_duration:
-				#self.current_state = "flight"
-				#self.flight_start_time = time.time()
-				self.current_state = "idle"
+				self.current_state = "flight"
+				self.flight_start_time = time.time()
 				
 		elif self.current_state == "flight":
 			print(self.current_state, self.velocity)
