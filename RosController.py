@@ -187,7 +187,8 @@ class RosController(Node):
 				(
 					forward_xy_position, 
 					np.array([self.desired_height])
-				)
+				), 
+				dtype = np.float32
 			)
 			self.desired_heading = self.heading
 		
