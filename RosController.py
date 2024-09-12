@@ -53,11 +53,12 @@ class RosController(Node):
 		self.is_armed = False
 		self.is_offboard = False
 		
-		self.heading = 0
+		self.heading = 0.0
 		self.position = np.zeros(3, dtype = np.float32)
 		self.velocity = np.zeros(3, dtype = np.float32)
 		
 		self.desired_position = np.zeros(3, dtype = np.float32)
+		self.desired_heading = 0.0
 
 		timer_period = 0.02
 		self.timer = self.create_timer(timer_period, self.Update)
@@ -86,13 +87,15 @@ class RosController(Node):
 				self.current_state = "takeoff"
 				
 		elif self.current_state == "takeoff":
-			self.GotoPoint(np.array([0, 0, -self.desired_height], dtype = np.float32))
+			self.GotoPoint(np.array([0, 0, -self.desired_height], dtype = np.float32), self.desired_heading)
 			
 			if self.position[2] > self.desired_height:
 				self.current_state = "flight"
 				
 		elif self.current_state == "flight":
 			print(self.desired_position)
+			
+			self.GotoPoint(self.desired_position, self.desired_heading)
 		
 		elif self.current_state == "idle":
 			pass
@@ -111,11 +114,11 @@ class RosController(Node):
 		
 		self.publisher_offboard_mode.publish(msg)
 
-	def GotoPoint(self, position):
+	def GotoPoint(self, position, heading):
 		msg = GotoSetpoint()
 		msg.timestamp = int(Clock().now().nanoseconds / 1000)
 		msg.position = position
-		msg.heading = 0
+		msg.heading = heading
 		
 		self.setpoint_publisher.publish(msg)
 
@@ -182,6 +185,7 @@ class RosController(Node):
 					np.array([self.desired_height])
 				)
 			)
+			self.desired_heading = self.heading
 		
 		self.is_armed = msg_is_armed
 		self.is_offboard = msg_is_offboard
