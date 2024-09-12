@@ -81,19 +81,23 @@ class RosController(Node):
 
 	def TakeAction(self):
 		if self.current_state == "warmup":
+			print(self.current_state, self.cycles)
+			
 			self.WarmUp()
 			
 			if self.cycles > 200:
 				self.current_state = "takeoff"
 				
 		elif self.current_state == "takeoff":
+			print(self.current_state, self.position)
+			
 			self.GotoPoint(np.array([0, 0, -self.desired_height], dtype = np.float32), self.desired_heading)
 			
 			if self.position[2] > self.desired_height:
 				self.current_state = "flight"
 				
 		elif self.current_state == "flight":
-			print(self.desired_position)
+			print(self.current_state, self.desired_position)
 			
 			self.GotoPoint(self.desired_position, self.desired_heading)
 		
