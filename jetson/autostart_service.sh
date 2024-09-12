@@ -1,5 +1,7 @@
 #!/bin/bash
 
+source /opt/ros/humble/setup.bash
+
 # >>> conda initialize >>>
 # !! Contents within this block are managed by 'conda init' !!
 __conda_setup="$('/home/jetson/miniforge3/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
