@@ -144,7 +144,7 @@ class RosController(Node):
 		msg.velocity = velocity
 		msg.yaw = heading
 		
-		self.setpoint_publisher.publish(msg)
+		self.trajectory_publisher.publish(msg)
 
 	def SetDropper(self, is_closed):
 		servo_signal = -1.0
