@@ -2,7 +2,7 @@
 Description=aeromed_tau_autopilot
 
 [Service]
-ExecStart=/home/jetson/miniforge3/condabin/mamba init && /home/jetson/miniforge3/condabin/mamba activate py3.10 && /home/jetson/miniforge3/envs/py3.10/bin/python /home/jetson/amt/Main.py
+ExecStart=/home/jetson/amt/jetson/autostart_service.sh
 
 [Install]
 WantedBy=default.target
