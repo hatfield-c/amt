@@ -92,7 +92,7 @@ class RosController(Node):
 				self.takeoff_start_time = time.time()
 				
 		elif self.current_state == "takeoff":
-			print(self.current_state, self.position)
+			print(self.current_state, self.velocity)
 			
 			self.SetTrajectory(np.array([0, 0, -self.takeoff_speed], dtype = np.float32), self.fixed_heading)
 			
@@ -134,7 +134,6 @@ class RosController(Node):
 			msg.direct_actuator = True
 			
 		if self.current_state in ["takeoff", "flight", "return", "idle"]:
-			msg.position = True
 			msg.velocity = True
 		
 		self.publisher_offboard_mode.publish(msg)
@@ -142,8 +141,8 @@ class RosController(Node):
 	def SetTrajectory(self, velocity, heading):
 		msg = TrajectorySetpoint()
 		msg.timestamp = int(Clock().now().nanoseconds / 1000)
-		msg.position = velocity
-		msg.heading = heading
+		msg.velocity = velocity
+		msg.yaw = heading
 		
 		self.setpoint_publisher.publish(msg)
 
