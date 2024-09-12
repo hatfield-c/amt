@@ -83,13 +83,12 @@ class RosController(Node):
 
 	def TakeAction(self):
 		if self.current_state == "warmup":
-			#print(self.current_state, self.cycles)
-			print(self.current_state, self.position, self.position_offset)
+			print(self.current_state, self.cycles)
 			
 			self.WarmUp()
 			
-			#if self.cycles > 200:
-			#	self.current_state = "takeoff"
+			if self.cycles > 200:
+				self.current_state = "takeoff"
 				
 		elif self.current_state == "takeoff":
 			print(self.current_state, self.position)
