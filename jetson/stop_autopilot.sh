@@ -1,3 +1,3 @@
 #!/bin/bash
 
-sudo systemctl stop aeromed_tau_autopilot.service
+systemctl --user stop aeromed_tau_autopilot.service

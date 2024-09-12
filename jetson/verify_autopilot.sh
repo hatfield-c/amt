@@ -1,3 +1,3 @@
 #!/bin/bash
 
-systemctl list-unit-files | grep aeromed_tau_autopilot.service
+systemctl --user status aeromed_tau_autopilot.service
