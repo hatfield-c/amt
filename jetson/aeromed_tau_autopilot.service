@@ -2,7 +2,7 @@
 Description=aeromed_tau_autopilot
 
 [Service]
-ExecStart=/home/jetson/amt/jetson/autostart_service.sh
+ExecStart=source /home/jetson/amt/jetson/autostart_service.sh
 
 [Install]
 WantedBy=default.target
