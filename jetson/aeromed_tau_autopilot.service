@@ -2,13 +2,7 @@
 Description=aeromed_tau_autopilot
 
 [Service]
-Type=exec
-User=jetson
-Group=jetson
-Restart=always
-ExecStartPre=/bin/mkdir -p /var/run/aeromed_tau_autopilot
-PIDFile=/var/run/aeromed_tau_autopilot/service.pid
-ExecStart=mamba activate py3.10 ; /home/jetson/miniforge3/envs/py3.10/bin/python /home/jetson/amt/Main.py
+ExecStart=/home/jetson/miniforge3/envs/py3.10/bin/python /home/jetson/amt/Main.py
 
 [Install]
-WantedBy=multi-user.target
+WantedBy=default.target
