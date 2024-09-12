@@ -97,8 +97,9 @@ class RosController(Node):
 			self.SetTrajectory(np.array([0, 0, -self.takeoff_speed], dtype = np.float32), self.fixed_heading)
 			
 			if time.time() - self.takeoff_start_time > self.takeoff_duration:
-				self.current_state = "flight"
-				self.flight_start_time = time.time()
+				#self.current_state = "flight"
+				#self.flight_start_time = time.time()
+				self.current_state = "idle"
 				
 		elif self.current_state == "flight":
 			print(self.current_state, self.velocity)
