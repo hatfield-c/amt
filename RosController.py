@@ -73,7 +73,6 @@ class RosController(Node):
 		self.PrepareToCommand()
 		
 		#print("[Activated]:", self.is_armed and self.is_offboard)
-		print(self.desired_heading, self.heading)
 		
 		if not self.is_armed or not self.is_offboard:
 			return
@@ -191,7 +190,8 @@ class RosController(Node):
 		if msg_is_offboard and not self.is_offboard:
 			self.current_state = "warmup"
 			self.cycles = 0
-			self.position_offset = self.raw_position.copy()
+			self.position_offset[0] = self.raw_position[0]
+			self.position_offset[2] = self.raw_position[1]
 			
 			forward_direction = np.array([
 				math.cos(self.heading),
