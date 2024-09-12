@@ -1,6 +1,7 @@
 #!/bin/bash
 
 source /opt/ros/humble/setup.bash
+source /home/jetson/code/ros2_jetpack6_ws/install/setup.bash
 
 # >>> conda initialize >>>
 # !! Contents within this block are managed by 'conda init' !!
