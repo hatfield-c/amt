@@ -163,7 +163,7 @@ class RosController(Node):
 	def PositionCallback(self, msg):
 		self.position[0] = msg.x - self.position_offset[0]
 		self.position[1] = msg.y - self.position_offset[1]
-		self.position[2] = -(msg.z - self.position_offset[2])
+		self.position[2] = -(msg.z + self.position_offset[2])
 		
 		self.velocity[0] = msg.vx
 		self.velocity[1] = msg.vy
@@ -178,7 +178,7 @@ class RosController(Node):
 		if msg_is_offboard and not self.is_offboard:
 			self.current_state = "warmup"
 			self.cycles = 0
-			self.position_offset = self.position
+			self.position_offset = self.position.copy()
 			
 			forward_direction = np.array([
 				math.cos(self.heading),
