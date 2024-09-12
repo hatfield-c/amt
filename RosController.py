@@ -99,12 +99,20 @@ class RosController(Node):
 				self.current_state = "flight"
 				
 		elif self.current_state == "flight":
-			print(self.current_state, self.desired_position)
+			error = self.desired_position[0:2] - self.position[0:2]
+			
+			print(self.current_state, error, self.desired_position, self.desired_heading)
+			
+			error = np.abs(error)
+			error = np.sum(error)
 			
 			self.GotoPoint(self.desired_position, self.desired_heading)
+			
+			if error < 1:
+				self.current_state = "idle"
 		
 		elif self.current_state == "idle":
-			pass
+			self.WarmUp()
 
 	def PrepareToCommand(self):
 		msg = OffboardControlMode()
@@ -193,7 +201,7 @@ class RosController(Node):
 			self.desired_position = np.concatenate(
 				(
 					forward_xy_position, 
-					np.array([self.desired_height])
+					np.array([-self.desired_height])
 				), 
 				dtype = np.float32
 			)
