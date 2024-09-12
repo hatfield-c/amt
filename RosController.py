@@ -123,6 +123,8 @@ class RosController(Node):
 				self.current_state = "idle"
 		
 		elif self.current_state == "idle":
+			print(self.current_state, self.velocity)
+			
 			self.SetTrajectory(np.zeros(3, dtype = np.float32), self.fixed_heading)
 
 	def PrepareToCommand(self):
