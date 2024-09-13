@@ -24,12 +24,26 @@ class TrajectorySequence:
 			
 		return is_complete
 		
+	def GetCompletion(self):
+		time_passed = self.GetTimerValue()
+		
+		return time_passed / self.duration
+	
+	def GetTimerValue(self):
+		time_passed = time.time() - self.start_time
+		
+		return time_passed
+	
+	def GetTimerValueStr(self):
+		time_passed = self.GetTimerValue()
+		
+		return "{:.2f}".format(time_passed)
+	
 	def GetTrajectory(self):
 		if self.start_time is None:
 			return self.start_yaw, self.start_speed, self.start_direction
 		
-		time_passed = time.time() - self.start_time
-		interpolation = time_passed / self.duration
+		interpolation = self.GetCompletion()
 		
 		if interpolation > 1.0:
 			interpolation = 1.0

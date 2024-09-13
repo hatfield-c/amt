@@ -197,7 +197,8 @@ class RosController(Node):
 				)
 				
 				next_sequence_state = self.sequence_states[self.sequence_state_index]
-				next_sequence_state.StartTimer()
+				next_sequence = self.trajectory_sequences[next_sequence_state]
+				next_sequence.StartTimer()
 				
 		elif self.system_state == "descend":
 			print(self.system_state, self.velocity)
