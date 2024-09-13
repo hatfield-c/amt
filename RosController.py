@@ -15,19 +15,33 @@ from px4_msgs.msg import VehicleControlMode
 from px4_msgs.msg import VehicleCommand
 from px4_msgs.msg import VehicleLocalPosition
 
+import TrajectorySequence
+
 class RosController(Node):
 
 	def __init__(self):
 		super().__init__('minimal_publisher')
 		
-		self.takeoff_duration = 4
-		self.flight_duration = 5
-		self.fixed_heading = 1.55
+		self.forward_heading = 1.55
+		self.backward_heading = self.forward_heading - math.pi
+		if self.forward_heading < 0:
+			self.backward_heading = self.forward_heading + math.pi
 		
-		self.takeoff_speed = 3
-		self.flight_speed = 3
+		self.takeoff_speed = 6
+		self.flight_speed = 9
+		self.orbit_speed = 4
 		
-		self.flight_velocity = np.array([math.cos(self.fixed_heading), math.sin(self.fixed_heading), 0], dtype = np.float32) * self.flight_speed
+		self.spinup_duration = 5
+		self.takeoff_duration = 10
+		self.up_to_forward_duration = 5
+		self.forward_duration = 6
+		self.forward_to_up_duration = 5
+		self.up_to_backward_duration = 5
+		self.backward_duration = 8
+		
+		self.up_direction = np.array([0, 0, -1], np.float32)
+		self.forward_direction = np.array([math.cos(self.fixed_heading), math.sin(self.fixed_heading), 0], dtype = np.float32)
+		self.backward_direction = -self.forward_direction
 		
 		qos_profile = QoSProfile(
 			reliability = QoSReliabilityPolicy.BEST_EFFORT,
@@ -61,15 +75,81 @@ class RosController(Node):
 		
 		self.velocity = np.zeros(3, dtype = np.float32)
 		
-		update_period = 0.02
-		self.update_timer = self.create_timer(update_period, self.Update)
+		self.trajectory_sequences = {
+			"0_spinup": TrajectorySequence.TrajectorySequence(
+				start_yaw = self.forward_heading,
+				start_speed = 0,
+				start_direction = self.up_direction,
+				end_yaw = self.forward_heading,
+				end_speed = self.takeoff_speed,
+				end_direction = self.up_direction,
+				duration = self.spinup_duration
+			),
+			"1_takeoff": TrajectorySequence.TrajectorySequence(
+				start_yaw = self.forward_heading,
+				start_speed = self.takeoff_speed,
+				start_direction = self.up_direction,
+				end_yaw = self.forward_heading,
+				end_speed = self.takeoff_speed,
+				end_direction = self.up_direction,
+				duration = self.takeoff_duration
+			),
+			"2_up_to_forward": TrajectorySequence.TrajectorySequence(
+				start_yaw = self.forward_heading,
+				start_speed = self.takeoff_speed,
+				start_direction = self.up_direction,
+				end_yaw = self.forward_heading,
+				end_speed = self.flight_speed,
+				end_direction = self.forward_direction,
+				duration = self.up_to_forward_duration
+			),
+			"3_forward": TrajectorySequence.TrajectorySequence(
+				start_yaw = self.forward_heading,
+				start_speed = self.flight_speed,
+				start_direction = self.forward_direction,
+				end_yaw = self.forward_heading,
+				end_speed = self.flight_speed,
+				end_direction = self.forward_direction,
+				duration = self.forward_duration
+			),
+			"4_forward_to_up": TrajectorySequence.TrajectorySequence(
+				start_yaw = self.forward_heading,
+				start_speed = self.flight_speed,
+				start_direction = self.forward_direction,
+				end_yaw = self.backward_heading,
+				end_speed = self.flight_speed,
+				end_direction = self.up_direction,
+				duration = self.forward_to_up_duration
+			),
+			"5_up_to_backward": TrajectorySequence.TrajectorySequence(
+				start_yaw = self.backward_heading,
+				start_speed = self.flight_speed,
+				start_direction = self.up_direction,
+				end_yaw = self.backward_heading,
+				end_speed = self.flight_speed,
+				end_direction = self.backward_direction,
+				duration = self.up_to_backward_duration
+			),
+			"6_backward": TrajectorySequence.TrajectorySequence(
+				start_yaw = self.backward_heading,
+				start_speed = self.flight_speed,
+				start_direction = self.backward_direction,
+				end_yaw = self.backward_heading,
+				end_speed = self.flight_speed,
+				end_direction = self.backward_direction,
+				duration = self.backward_duration
+			),
+		}
 		
+		self.sequence_states = sorted(list(self.trajectory_sequences.keys()))
+		self.sequence_state_index = 0
+		self.system_state = "warmup"
 		self.cycles = 0
-		self.takeoff_start_time = time.time()
-		self.flight_start_time = time.time()
-		self.current_state = "warmup"
 		
 		print("<uORB RosController Initialzed!>")
+		
+		update_period = 0.02
+		self.update_timer = self.create_timer(update_period, self.Update)
 		
 	def Update(self):
 		self.PrepareToCommand()
@@ -82,60 +162,60 @@ class RosController(Node):
 		self.cycles += 1
 
 	def TakeAction(self):
-		if self.current_state == "warmup":
-			print(self.current_state, self.cycles)
+		velocity = None
+		heading = None
+		
+		if self.system_state == "warmup":
+			print(self.system_state, self.cycles)
 			
 			self.WarmUp()
 			
 			if self.cycles > 200:
-				self.current_state = "takeoff"
-				self.takeoff_start_time = time.time()
+				self.system_state = "hot"
 				
-		elif self.current_state == "takeoff":
-			print(self.current_state, self.velocity)
-			
-			self.SetTrajectory(np.array([0, 0, -self.takeoff_speed], dtype = np.float32), self.fixed_heading)
-			
-			if time.time() - self.takeoff_start_time > self.takeoff_duration:
-				self.current_state = "flight"
-				self.flight_start_time = time.time()
+				sequence_state = self.sequence_states[self.sequence_state_index]
+				trajectory_sequence = self.trajectory_sequences[sequence_state]
+				trajectory_sequence.StartTimer()
 				
-		elif self.current_state == "flight":
-			print(self.current_state, self.velocity)
+		elif self.system_state == "hot":
 			
-			self.SetTrajectory(self.flight_velocity, self.fixed_heading)
+			sequence_state = self.sequence_states[self.sequence_state_index]
+			trajectory_sequence = self.trajectory_sequences[sequence_state]
 			
-			if time.time() - self.flight_start_time > self.flight_duration:
-				self.current_state = "return"
-				self.flight_start_time = time.time()
+			heading, speed, direction = trajectory_sequence.GetTrajectory()
+			velocity = speed * direction
+			
+			print(sequence_state, heading, velocity, self.velocity)
+			
+			if trajectory_sequence.IsComplete():
+				if sequence_state == self.sequence_states[-1]:
+					self.system_state = "descend"
+					
+				self.sequence_state_index = min(
+					self.sequence_state_index + 1, 
+					len(self.sequence_states) - 1
+				)
+				
+				next_sequence_state = self.sequence_states[self.sequence_state_index]
+				next_sequence_state.StartTimer()
+				
+		elif self.system_state == "descend":
+			print(self.system_state, self.velocity)
+			
+			velocity = -self.up_direction
+			heading = self.backward_heading
 		
-		elif self.current_state == "return":
-			print(self.current_state, self.velocity)
-			
-			reverse_velocity = -self.flight_velocity
-			reverse_heading = self.fixed_heading - math.pi
-			if self.fixed_heading < 0:
-				reverse_heading = self.fixed_heading + math.pi
-			
-			self.SetTrajectory(reverse_velocity, reverse_heading)
-			
-			if time.time() - self.flight_start_time > self.flight_duration:
-				self.current_state = "idle"
-		
-		elif self.current_state == "idle":
-			print(self.current_state, self.velocity)
-			
-			self.SetTrajectory(np.zeros(3, dtype = np.float32), self.fixed_heading)
+		if velocity is not None and heading is not None:
+			self.SetTrajectory(velocity, heading)
 
 	def PrepareToCommand(self):
 		msg = OffboardControlMode()
 		
 		msg.timestamp = int(Clock().now().nanoseconds / 1000)
 		
-		if self.current_state == "warmup":
+		if self.system_state == "warmup":
 			msg.direct_actuator = True
-			
-		if self.current_state in ["takeoff", "flight", "return", "idle"]:
+		elif self.system_state in ["hot", "descend"]:
 			msg.velocity = True
 		
 		self.publisher_offboard_mode.publish(msg)
@@ -190,7 +270,8 @@ class RosController(Node):
 		msg_is_offboard = msg.flag_control_offboard_enabled
 		
 		if msg_is_offboard and not self.is_offboard:
-			self.current_state = "warmup"
+			self.sequence_state_index = 0
+			self.system_state = "warmup"
 			self.cycles = 0
 			
 		self.is_armed = msg_is_armed
