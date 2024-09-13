@@ -40,7 +40,7 @@ class RosController(Node):
 		self.backward_duration = 8
 		
 		self.up_direction = np.array([0, 0, -1], np.float32)
-		self.forward_direction = np.array([math.cos(self.fixed_heading), math.sin(self.fixed_heading), 0], dtype = np.float32)
+		self.forward_direction = np.array([math.cos(self.forward_heading), math.sin(self.forward_heading), 0], dtype = np.float32)
 		self.backward_direction = -self.forward_direction
 		
 		qos_profile = QoSProfile(
