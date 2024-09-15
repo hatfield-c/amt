@@ -15,7 +15,8 @@ from px4_msgs.msg import VehicleControlMode
 from px4_msgs.msg import VehicleCommand
 from px4_msgs.msg import VehicleLocalPosition
 
-import TrajectorySequence
+import ai.TrajectorySequence as TrajectorySequence
+import ai.FlightSequence as FlightSequence
 
 class RosController(Node):
 
@@ -103,13 +104,10 @@ class RosController(Node):
 				end_direction = self.forward_direction,
 				duration = self.up_to_forward_duration
 			),
-			"3_forward": TrajectorySequence.TrajectorySequence(
-				start_yaw = self.forward_heading,
-				start_speed = self.flight_speed,
-				start_direction = self.forward_direction,
-				end_yaw = self.forward_heading,
-				end_speed = self.flight_speed,
-				end_direction = self.forward_direction,
+			"3_forward": FlightSequence.FlightSequence(
+				yaw = self.forward_heading,
+				speed = self.flight_speed,
+				direction = self.forward_direction,
 				duration = self.forward_duration
 			),
 			"4_forward_to_up": TrajectorySequence.TrajectorySequence(

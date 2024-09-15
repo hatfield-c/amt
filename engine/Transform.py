@@ -1,6 +1,6 @@
 import torch
 
-import Quaternion
+import engine.Quaternion as Quaternion
 
 FORWARD = torch.FloatTensor([[0, 1, 0]]).cuda()
 RIGHT = torch.FloatTensor([[1, 0, 0]]).cuda()
