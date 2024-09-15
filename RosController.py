@@ -32,7 +32,7 @@ class RosController(Node):
 		self.flight_speed = 10
 		
 		self.spinup_duration = 5
-		self.takeoff_duration = 10
+		self.takeoff_duration = 5
 		self.up_to_forward_duration = 5
 		self.forward_duration = 6
 		self.forward_to_up_duration = 5
@@ -81,19 +81,19 @@ class RosController(Node):
 				start_speed = self.takeoff_speed,
 				start_direction = self.up_direction,
 				end_yaw = self.forward_heading,
-				end_speed = self.takeoff_speed,
-				end_direction = self.up_direction,
+				end_speed = self.flight_speed,
+				end_direction = self.forward_direction,
 				duration = self.takeoff_duration
 			),
-			#"1_takeoff": TrajectorySequence.TrajectorySequence(
-			#	start_yaw = self.forward_heading,
-			#	start_speed = self.takeoff_speed,
-			#	start_direction = self.up_direction,
-			#	end_yaw = self.forward_heading,
-			#	end_speed = self.takeoff_speed,
-			#	end_direction = self.up_direction,
-			#	duration = self.takeoff_duration
-			#),
+			"1_flight": TrajectorySequence.TrajectorySequence(
+				start_yaw = self.forward_heading,
+				start_speed = self.flight_speed,
+				start_direction = self.forward_direction,
+				end_yaw = self.forward_heading,
+				end_speed = self.flight_speed,
+				end_direction = self.forward_direction,
+				duration = self.forward_duration
+			),
 		}
 		'''
 			"2_up_to_forward": TrajectorySequence.TrajectorySequence(
