@@ -31,9 +31,9 @@ class RosController(Node):
 		self.backward_direction = -self.forward_direction
 		
 		self.takeoff_speed = 10
-		self.flight_speed = 6
+		self.flight_speed = 10
 		
-		self.takeoff_duration = 4
+		self.takeoff_duration = 5
 		self.forward_duration = 2
 		self.backward_duration = 6
 		
@@ -160,12 +160,12 @@ class RosController(Node):
 			heading, speed, direction = trajectory_sequence.GetTrajectory()
 			velocity = speed * direction
 			
-			print_header = "[" + str(sequence_state) + " : " + trajectory_sequence.GetTimerValueStr() + "]"
-			print(print_header, heading, velocity, self.velocity)
-			
 			if trajectory_sequence.IsComplete():
 				if sequence_state == self.sequence_states[-1]:
 					self.system_state = "descend"
+					
+				print_header = "[" + str(sequence_state) + " : " + trajectory_sequence.GetTimerValueStr() + "]"
+				print(print_header, heading, velocity, self.velocity)
 					
 				self.sequence_state_index = min(
 					self.sequence_state_index + 1, 
