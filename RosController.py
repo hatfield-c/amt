@@ -23,7 +23,7 @@ class RosController(Node):
 	def __init__(self):
 		super().__init__('minimal_publisher')
 		
-		self.forward_heading = -2.09
+		self.forward_heading = -1.7
 		self.backward_heading = self.forward_heading - math.pi
 		if self.forward_heading < 0:
 			self.backward_heading = self.forward_heading + math.pi
@@ -34,10 +34,10 @@ class RosController(Node):
 		self.spinup_duration = 5
 		self.takeoff_duration = 5
 		self.up_to_forward_duration = 5
-		self.forward_duration = 6
+		self.forward_duration = 3
 		self.forward_to_up_duration = 5
 		self.up_to_backward_duration = 5
-		self.backward_duration = 8
+		self.backward_duration = 6
 		
 		self.up_direction = np.array([0, 0, -1], np.float32)
 		self.forward_direction = np.array([math.cos(self.forward_heading), math.sin(self.forward_heading), 0], dtype = np.float32)
@@ -85,7 +85,7 @@ class RosController(Node):
 				end_direction = self.forward_direction,
 				duration = self.takeoff_duration
 			),
-			"1_flight": TrajectorySequence.TrajectorySequence(
+			"1_forward": TrajectorySequence.TrajectorySequence(
 				start_yaw = self.forward_heading,
 				start_speed = self.flight_speed,
 				start_direction = self.forward_direction,
@@ -93,6 +93,15 @@ class RosController(Node):
 				end_speed = self.flight_speed,
 				end_direction = self.forward_direction,
 				duration = self.forward_duration
+			),
+			"2_backward": TrajectorySequence.TrajectorySequence(
+				start_yaw = self.backward_heading,
+				start_speed = self.flight_speed,
+				start_direction = self.backward_direction,
+				end_yaw = self.backward_heading,
+				end_speed = self.flight_speed,
+				end_direction = self.backward_direction,
+				duration = self.backward_duration
 			),
 		}
 		'''
