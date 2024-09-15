@@ -6,7 +6,7 @@ import traceback
 
 import RosController as RosController
 
-with open('tau_log.txt') as sys.stdout:
+with open('tau_log.txt', "w") as sys.stdout:
 	try:
 	
 		rclpy.init()
