@@ -23,7 +23,7 @@ class RosController(Node):
 	def __init__(self):
 		super().__init__('minimal_publisher')
 		
-		self.forward_heading = 1.55
+		self.forward_heading = -1.55
 		self.backward_heading = self.forward_heading - math.pi
 		if self.forward_heading < 0:
 			self.backward_heading = self.forward_heading + math.pi
