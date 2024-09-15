@@ -79,8 +79,6 @@ class RosController(Node):
 		
 		self.ResetOrientation()
 		
-		print("<uORB RosController Initialzed!>")
-		
 		update_period = 0.02
 		self.update_timer = self.create_timer(update_period, self.Update)
 		

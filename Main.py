@@ -11,6 +11,9 @@ with open('tau_log.txt', "w") as sys.stdout:
 	
 		rclpy.init()
 		ros_controller = RosController.RosController()
+		print("<uORB RosController Initialzed!>")
+	
+		test = 1 / 0
 	
 		rclpy.spin(ros_controller)
 		ros_controller.destroy_node()
