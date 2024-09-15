@@ -1,7 +1,7 @@
 import time
 import numpy as np
 
-class FlightSequence:
+class ConstantSequence:
 	def __init__(self, yaw, speed, direction, duration):
 		self.yaw = yaw
 		self.speed = speed

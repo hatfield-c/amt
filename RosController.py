@@ -16,17 +16,15 @@ from px4_msgs.msg import VehicleCommand
 from px4_msgs.msg import VehicleLocalPosition
 
 import ai.TrajectorySequence as TrajectorySequence
-import ai.FlightSequence as FlightSequence
+import ai.ConstantSequence as ConstantSequence
 
 class RosController(Node):
 
 	def __init__(self):
 		super().__init__('minimal_publisher')
 		
-		self.forward_heading = -1.6
-		self.backward_heading = self.forward_heading - math.pi
-		if self.forward_heading < 0:
-			self.backward_heading = self.forward_heading + math.pi
+		self.forward_heading = 0
+		self.backward_heading = math.pi
 		
 		self.takeoff_speed = 10
 		self.flight_speed = 6
@@ -34,10 +32,6 @@ class RosController(Node):
 		self.takeoff_duration = 4
 		self.forward_duration = 2
 		self.backward_duration = 6
-		
-		self.up_direction = np.array([0, 0, -1], np.float32)
-		self.forward_direction = np.array([math.cos(self.forward_heading), math.sin(self.forward_heading), 0], dtype = np.float32)
-		self.backward_direction = -self.forward_direction
 		
 		qos_profile = QoSProfile(
 			reliability = QoSReliabilityPolicy.BEST_EFFORT,
@@ -70,7 +64,28 @@ class RosController(Node):
 		self.is_offboard = False
 		
 		self.velocity = np.zeros(3, dtype = np.float32)
+		self.heading = 0
+		self.heading_smooth = 0
 		
+		self.trajectory_sequences = {}
+		self.sequence_states = []
+		self.sequence_state_index = 0
+		self.system_state = "warmup"
+		self.cycles = 0
+		
+		self.ResetOrientation()
+		
+		print("<uORB RosController Initialzed!>")
+		
+		update_period = 0.02
+		self.update_timer = self.create_timer(update_period, self.Update)
+		
+	def ResetOrientation(self):
+		self.forward_heading = self.heading_smooth
+		self.backward_heading = self.forward_heading - math.pi
+		if self.forward_heading < 0:
+			self.backward_heading = self.forward_heading + math.pi
+			
 		self.trajectory_sequences = {
 			"0_takeoff": TrajectorySequence.TrajectorySequence(
 				start_yaw = self.forward_heading,
@@ -81,31 +96,22 @@ class RosController(Node):
 				end_direction = self.forward_direction,
 				duration = self.takeoff_duration
 			),
-			"1_forward": TrajectorySequence.TrajectorySequence(
-				start_yaw = self.forward_heading,
-				start_speed = self.flight_speed,
-				start_direction = self.forward_direction,
-				end_yaw = self.forward_heading,
-				end_speed = self.flight_speed,
-				end_direction = self.forward_direction,
+			"1_forward": ConstantSequence.ConstantSequence(
+				yaw = self.forward_heading,
+				speed = self.flight_speed,
+				direction = self.forward_direction,
 				duration = self.forward_duration
 			),
-			"2_backward": TrajectorySequence.TrajectorySequence(
-				start_yaw = self.backward_heading,
-				start_speed = self.flight_speed,
-				start_direction = self.backward_direction,
-				end_yaw = self.backward_heading,
-				end_speed = self.flight_speed,
-				end_direction = self.backward_direction,
+			"2_backward": ConstantSequence.ConstantSequence(
+				yaw = self.backward_heading,
+				speed = self.flight_speed,
+				direction = self.backward_direction,
 				duration = self.backward_duration
 			),
-			"4_brakes": TrajectorySequence.TrajectorySequence(
-				start_yaw = self.backward_heading,
-				start_speed = self.flight_speed * 0,
-				start_direction = self.backward_direction * 0,
-				end_yaw = self.backward_heading,
-				end_speed = self.flight_speed * 0,
-				end_direction = self.backward_direction * 0,
+			"4_brakes": ConstantSequence.ConstantSequence(
+				yaw = self.backward_heading,
+				speed = self.flight_speed * 0,
+				direction = self.backward_direction * 0,
 				duration = self.backward_duration
 			),
 		}
@@ -114,11 +120,6 @@ class RosController(Node):
 		self.sequence_state_index = 0
 		self.system_state = "warmup"
 		self.cycles = 0
-		
-		print("<uORB RosController Initialzed!>")
-		
-		update_period = 0.02
-		self.update_timer = self.create_timer(update_period, self.Update)
 		
 	def Update(self):
 		self.PrepareToCommand()
@@ -238,15 +239,17 @@ class RosController(Node):
 		self.velocity[0] = msg.vx
 		self.velocity[1] = msg.vy
 		self.velocity[2] = -msg.vz
+		
+		self.heading = msg.heading
+		self.heading_smooth = ((2 / 3) * self.heading_smooth) + ((1 / 3) * msg.heading)
 
 	def ControlModeCallback(self, msg):
 		msg_is_armed = msg.flag_armed
 		msg_is_offboard = msg.flag_control_offboard_enabled
 		
 		if msg_is_offboard and not self.is_offboard:
-			self.sequence_state_index = 0
-			self.system_state = "warmup"
-			self.cycles = 0
+			self.ResetOrientation()
 			
 		self.is_armed = msg_is_armed
 		self.is_offboard = msg_is_offboard
+		
