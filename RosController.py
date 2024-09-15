@@ -85,15 +85,15 @@ class RosController(Node):
 				end_direction = self.up_direction,
 				duration = self.takeoff_duration
 			),
-			"1_forward": TrajectorySequence.TrajectorySequence(
-				start_yaw = self.forward_heading,
-				start_speed = self.flight_speed,
-				start_direction = self.forward_direction,
-				end_yaw = self.forward_heading,
-				end_speed = self.flight_speed,
-				end_direction = self.forward_direction,
-				duration = self.forward_duration
-			),
+			#"1_takeoff": TrajectorySequence.TrajectorySequence(
+			#	start_yaw = self.forward_heading,
+			#	start_speed = self.takeoff_speed,
+			#	start_direction = self.up_direction,
+			#	end_yaw = self.forward_heading,
+			#	end_speed = self.takeoff_speed,
+			#	end_direction = self.up_direction,
+			#	duration = self.takeoff_duration
+			#),
 		}
 		'''
 			"2_up_to_forward": TrajectorySequence.TrajectorySequence(
@@ -225,6 +225,9 @@ class RosController(Node):
 	def SetTrajectory(self, velocity, heading):
 		msg = TrajectorySetpoint()
 		msg.timestamp = int(Clock().now().nanoseconds / 1000)
+		msg.position[0] = np.nan
+		msg.position[1] = np.nan
+		msg.position[2] = np.nan
 		msg.velocity = velocity
 		msg.yaw = heading
 		
