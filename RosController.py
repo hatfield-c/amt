@@ -17,6 +17,7 @@ from px4_msgs.msg import VehicleLocalPosition
 
 import ai.TrajectorySequence as TrajectorySequence
 import ai.ConstantSequence as ConstantSequence
+#import ai.FlightColorAlignSequence as FlightColorAlignSequence
 
 class RosController(Node):
 
@@ -202,7 +203,7 @@ class RosController(Node):
 		msg.timestamp = int(Clock().now().nanoseconds / 1000)
 		msg.position[0] = np.nan
 		msg.position[1] = np.nan
-		msg.position[2] = 5
+		msg.position[2] = np.nan
 		msg.velocity = velocity
 		msg.yaw = heading
 		
