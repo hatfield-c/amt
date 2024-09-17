@@ -34,8 +34,8 @@ class RosController(Node):
 		self.flight_speed = 10
 		
 		self.takeoff_duration = 5
-		self.forward_duration = 2
-		self.backward_duration = 6
+		self.forward_duration = 8
+		self.backward_duration = 16
 		
 		qos_profile = QoSProfile(
 			reliability = QoSReliabilityPolicy.BEST_EFFORT,
@@ -202,7 +202,7 @@ class RosController(Node):
 		msg.timestamp = int(Clock().now().nanoseconds / 1000)
 		msg.position[0] = np.nan
 		msg.position[1] = np.nan
-		msg.position[2] = np.nan
+		msg.position[2] = 5
 		msg.velocity = velocity
 		msg.yaw = heading
 		
