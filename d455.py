@@ -14,7 +14,7 @@ while True:
 	depth_frame = frame.get_depth_frame()
 	
 	depth_image = np.asanyarray(depth_frame.get_data())
-	
+	exit()
 	cv2.imshow("depth", depth_image)
 	
 	if cv2.waitKey(1) == ord('q'):
