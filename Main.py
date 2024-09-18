@@ -17,7 +17,8 @@ def Main():
 	rclpy.spin(ros_controller)
 	ros_controller.destroy_node()
 	rclpy.shutdown()
-		
+	
+	ros_controller.depth_camera.data_pipe.stop()
 	if ros_controller.video_writer is not None:
 		ros_controller.video_writer.Release()
 

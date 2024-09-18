@@ -18,7 +18,9 @@ from px4_msgs.msg import VehicleLocalPosition
 import ai.TrajectorySequence as TrajectorySequence
 import ai.ConstantSequence as ConstantSequence
 import ai.FlightColorAlignSequence as FlightColorAlignSequence
+
 import VideoWriter
+import sensors.DepthCamera as DepthCamera
 
 class RosController(Node):
 
@@ -79,6 +81,7 @@ class RosController(Node):
 		self.system_state = "warmup"
 		self.cycles = 0
 		
+		self.depth_camera = DepthCamera.DepthCamera()
 		self.video_writer = None
 		if is_write_video:
 			self.video_writer = VideoWriter.VideoWriter()
@@ -96,7 +99,7 @@ class RosController(Node):
 			
 		self.forward_direction = np.array([math.cos(self.forward_heading), math.sin(self.forward_heading), 0], dtype = np.float32)
 		self.backward_direction = -self.forward_direction
-		print("reset")
+
 		self.trajectory_sequences = {
 			#"0_takeoff": TrajectorySequence.TrajectorySequence(
 			#	start_yaw = self.forward_heading,
@@ -110,6 +113,7 @@ class RosController(Node):
 			"1_forward": FlightColorAlignSequence.FlightColorAlignSequence(
 				speed = self.flight_speed * 0,
 				duration = self.forward_duration,
+				depth_camera = self.depth_camera,
 				video_writer = self.video_writer
 			),
 			#"2_backward": ConstantSequence.ConstantSequence(

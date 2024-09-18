@@ -3,11 +3,9 @@ import math
 import cv2
 import torch
 
-import sensors.DepthCamera as DepthCamera
-
 class PerceptionCortex:
-	def __init__(self, video_writer):
-		self.depth_camera = DepthCamera.DepthCamera()
+	def __init__(self, depth_camera, video_writer = None):
+		self.depth_camera = depth_camera
 		self.video_writer = video_writer
 		
 		voting_rounds = 0
