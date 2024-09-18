@@ -53,8 +53,8 @@ class FlightColorAlignSequence:
 		
 		self.perception_cortex.GetTargetPixelPosition()
 		
-		yaw = 0
-		speed = 0
+		yaw = 0.0
+		speed = 0.0
 		direction = np.ones(3, np.float32)
 		
 		direction_size = np.linalg.norm(direction)
