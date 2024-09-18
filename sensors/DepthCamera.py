@@ -18,16 +18,28 @@ class DepthCamera:
 		
 		self.data_pipe.start(self.rs_config)
 		
-	def GetImageData(self):
-		print("flag a")
-		frames = self.pipe.wait_for_frames()
-		
-		aligned_frames = self.aligner.process(frames)
+		self.profile = self.data_pipe.start(self.rs_config)
 
-		depth_frame = aligned_frames.get_depth_frame()
-		color_frame = aligned_frames.get_color_frame()
+		self.depth_sensor = self.profile.get_device().first_depth_sensor()
+		self.depth_scale = self.depth_sensor.get_depth_scale()
+
+		self.max_depth = 5
+		
+	def GetImageData(self):
+		camera_data = self.data_pipe.wait_for_frames()
+		camera_data = self.aligner.process(camera_data)
+		
+		depth_frame = camera_data.get_depth_frame()
+		color_frame = camera_data.get_color_frame()
 		
 		depth_image = np.asanyarray(depth_frame.get_data())
+		depth_image = depth_image.astype(np.float32)
+		depth_image = depth_image * self.depth_scale
+		depth_image = depth_image / self.max_depth
+		depth_image = np.clip(depth_image, 0, 1)
+		depth_image = depth_image * 255
+		depth_image = depth_image.astype(np.uint8)
+		
 		color_image = np.asanyarray(color_frame.get_data())
 		
 		return depth_image, color_image
