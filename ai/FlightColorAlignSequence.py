@@ -26,6 +26,7 @@ class FlightColorAlignSequence:
 		self.start_time = time.time()
 		
 		if self.video_writer is not None:
+			print("<Recording D455 Video>")
 			self.video_writer.Start()
 		
 	def IsComplete(self):
