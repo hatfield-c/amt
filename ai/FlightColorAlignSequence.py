@@ -25,6 +25,9 @@ class FlightColorAlignSequence:
 	def StartTimer(self):
 		self.start_time = time.time()
 		
+		if self.video_writer is not None:
+			self.video_writer.Start()
+		
 	def IsComplete(self):
 		is_complete = False
 		
