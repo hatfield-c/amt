@@ -14,6 +14,7 @@ while True:
 	depth_frame = frame.get_depth_frame()
 	
 	depth_image = np.asanyarray(depth_frame.get_data())
+	cv2.imwrite("d455_render.png", depth_image)
 	exit()
 	cv2.imshow("depth", depth_image)
 	
