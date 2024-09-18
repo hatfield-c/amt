@@ -33,7 +33,9 @@ while True:
 	
 	color_image = np.asanyarray(color_frame.get_data())
 	
-	cv2.imwrite("data/render/d455_render.png", depth_image)
+	merged_image = np.concatenate((depth_image, color_image), dim = 0)
+	
+	cv2.imwrite("data/render/d455_render.png", merged_image)
 	exit()
 	
 	cv2.imshow("depth", depth_image)
