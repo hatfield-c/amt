@@ -46,6 +46,7 @@ class PerceptionCortex:
 		depth_image, color_image = self.depth_camera.GetImageData()
 		
 		binary_frame = self.BlobbingFilter(color_image)
+		print(np.max(binary_frame))
 		
 		if self.video_writer is not None:
 			#self.video_writer.WritePair(depth_image, color_image)
@@ -91,6 +92,8 @@ class PerceptionCortex:
 
 	def BlobbingFilter(self, rgb_frame):
 		lab_frame = cv2.cvtColor(rgb_frame, cv2.COLOR_BGR2Lab)
+		
+		return lab_frame[0]
 
 		binary_frame = cv2.inRange(lab_frame, self.chroma_lower, self.chroma_upper)
 		binary_frame = self.VotePool(binary_frame)
