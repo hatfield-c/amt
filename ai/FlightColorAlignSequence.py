@@ -14,13 +14,20 @@ class FlightColorAlignSequence:
 		self.depth_camera = depth_camera
 		self.video_writer = video_writer
 		self.perception_cortex = PerceptionCortex.PerceptionCortex(depth_camera, video_writer)
-		self.pid = Pid.Pid(
+		
+		self.vertical_pid = Pid.Pid(
+			p_scale = 0.1,
+			i_scale = 0,
+			d_scale = 0
+		)
+		self.lateral_pid = Pid.Pid(
 			p_scale = 0.1,
 			i_scale = 0,
 			d_scale = 0
 		)
 		
 		self.target_state = np.array([320, 0])
+		self.target_height = -5
 		
 		self.start_time = None
 		
@@ -57,15 +64,22 @@ class FlightColorAlignSequence:
 		
 		return "{:.2f}".format(time_passed)
 	
-	def GetTrajectory(self):
+	def GetTrajectory(self, data):
 		if self.start_time is None:
 			return None
 		
+		position = data["position"]
+		velocity = data["velocity"]
+		
 		self.perception_cortex.GetTargetPixelPosition()
+		
+		vertical_error = self.vertical_pid(position[2], self.target_height, velocity[2])
 		
 		yaw = self.yaw
 		speed = self.speed
 		direction = self.direction
+		
+		direction[2] = vertical_error
 		
 		direction_size = np.linalg.norm(direction)
 		if direction_size == 0:

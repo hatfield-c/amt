@@ -39,7 +39,7 @@ class TrajectorySequence:
 		
 		return "{:.2f}".format(time_passed)
 	
-	def GetTrajectory(self):
+	def GetTrajectory(self, data):
 		if self.start_time is None:
 			return self.start_yaw, self.start_speed, self.start_direction
 		

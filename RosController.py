@@ -71,6 +71,7 @@ class RosController(Node):
 		self.is_armed = False
 		self.is_offboard = False
 		
+		self.position = np.zeros(3, dtype = np.float32)
 		self.velocity = np.zeros(3, dtype = np.float32)
 		self.heading = 0
 		self.heading_smooth = 0
@@ -99,9 +100,6 @@ class RosController(Node):
 			
 		self.forward_direction = np.array([math.cos(self.forward_heading), math.sin(self.forward_heading), 0], dtype = np.float32)
 		self.backward_direction = -self.forward_direction
-		
-		self.forward_direction[2] = -0.5
-		self.backward_direction[2] = -0.5
 
 		self.trajectory_sequences = {
 			"0_takeoff": TrajectorySequence.TrajectorySequence(
@@ -171,7 +169,12 @@ class RosController(Node):
 			sequence_state = self.sequence_states[self.sequence_state_index]
 			trajectory_sequence = self.trajectory_sequences[sequence_state]
 			
-			heading, speed, direction = trajectory_sequence.GetTrajectory()
+			data = {
+				"position": self.position,
+				"velocty": self.velocity
+			}
+			
+			heading, speed, direction = trajectory_sequence.GetTrajectory(data)
 			velocity = speed * direction
 			
 			print_header = "[" + str(sequence_state) + " : " + trajectory_sequence.GetTimerValueStr() + "]"
@@ -256,6 +259,10 @@ class RosController(Node):
 		self.motor_publisher.publish(msg)
 
 	def PositionCallback(self, msg):
+		self.position[0] = msg.x
+		self.position[1] = msg.y
+		self.position[2] = msg.z
+		
 		self.velocity[0] = msg.vx
 		self.velocity[1] = msg.vy
 		self.velocity[2] = -msg.vz
