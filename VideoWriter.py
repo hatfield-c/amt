@@ -3,7 +3,7 @@ import cv2
 
 class VideoWriter:
 	def __init__(self):
-		self.video_path = "data/render/d455_render.mp4"
+		self.video_path = "/home/jetson/amt/data/render/d455_render.mp4"
 		self.video_object = cv2.VideoWriter(
 			self.video_path,
 			cv2.VideoWriter_fourcc('m', 'p', '4', 'v'),
