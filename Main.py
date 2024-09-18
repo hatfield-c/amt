@@ -6,7 +6,7 @@ import traceback
 
 import RosController as RosController
 
-is_log_stdout = True
+is_log_stdout = False#True
 is_write_video = True
 
 def Main():

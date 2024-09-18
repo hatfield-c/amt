@@ -8,11 +8,11 @@ class PerceptionCortex:
 		self.depth_camera = depth_camera
 		self.video_writer = video_writer
 		
-		voting_rounds = 0
-		median_size = 0
-		dilate_size = 0
-		chroma_center = np.zeros(3)
-		chroma_width = np.zeros(3)
+		voting_rounds = 7
+		median_size = 5
+		dilate_size = -1
+		chroma_center = np.array([77, 43, 255], np.float32)
+		chroma_width = np.array([30, 12, 15], np.float32)
 		
 		self.voting_rounds = voting_rounds
 		self.median_size = median_size
@@ -45,12 +45,14 @@ class PerceptionCortex:
 	
 		depth_image, color_image = self.depth_camera.GetImageData()
 		
-		if self.video_writer is not None:
-			self.video_writer.WritePair(depth_image, color_image)
-	
-		return
-	
 		binary_frame = self.BlobbingFilter(color_image)
+		
+		if self.video_writer is not None:
+			#self.video_writer.WritePair(depth_image, color_image)
+			self.video_writer.WritePair(binary_frame, color_image)
+		
+		return
+		
 		contours = cv2.findContours(binary_frame, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[0]
 
 		tracker_frame = self.TrackingFilter(color_image, binary_frame)

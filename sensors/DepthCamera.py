@@ -23,7 +23,7 @@ class DepthCamera:
 
 		self.max_depth = 20
 		
-	def GetImageData(self):
+	def GetImageData(self, is_depth_255 = False):
 		camera_data = self.data_pipe.wait_for_frames()
 		camera_data = self.aligner.process(camera_data)
 		
@@ -33,10 +33,12 @@ class DepthCamera:
 		depth_image = np.asanyarray(depth_frame.get_data())
 		depth_image = depth_image.astype(np.float32)
 		depth_image = depth_image * self.depth_scale
-		depth_image = depth_image / self.max_depth
-		depth_image = np.clip(depth_image, 0, 1)
-		depth_image = depth_image * 255
-		depth_image = depth_image.astype(np.uint8)
+		
+		if is_depth_255:
+			depth_image = depth_image / self.max_depth
+			depth_image = np.clip(depth_image, 0, 1)
+			depth_image = depth_image * 255
+			depth_image = depth_image.astype(np.uint8)
 		
 		color_image = np.asanyarray(color_frame.get_data())
 		
