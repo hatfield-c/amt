@@ -9,7 +9,7 @@ class FlightColorAlignSequence:
 		self.speed = speed
 		self.duration = duration
 		
-		self.depth_camera
+		self.depth_camera = self.depth_camera
 		self.perception_cortex = PerceptionCortex.PerceptionCortex(depth_camera, video_writer)
 		self.pid = Pid.Pid(
 			p_scale = 0.1,
