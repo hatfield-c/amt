@@ -34,8 +34,8 @@ class RosController(Node):
 		self.forward_direction = np.array([1, 0, 0], dtype = np.float32)
 		self.backward_direction = -self.forward_direction
 		
-		self.takeoff_speed = 10
-		self.flight_speed = 10
+		self.takeoff_speed = 10.0
+		self.flight_speed = 10.0
 		
 		self.takeoff_duration = 5
 		self.forward_duration = 8
@@ -110,13 +110,19 @@ class RosController(Node):
 				end_direction = self.forward_direction,
 				duration = self.takeoff_duration
 			),
-			"1_forward": FlightColorAlignSequence.FlightColorAlignSequence(
+			#"1_forward": FlightColorAlignSequence.FlightColorAlignSequence(
+			#	yaw = self.forward_heading,
+			#	speed = self.flight_speed,
+			#	direction = self.forward_direction,
+			#	duration = self.forward_duration,
+			#	depth_camera = self.depth_camera,
+			#	video_writer = self.video_writer
+			#),
+			"1_forward": ConstantSequence.ConstantSequence(
 				yaw = self.forward_heading,
 				speed = self.flight_speed,
 				direction = self.forward_direction,
-				duration = self.forward_duration,
-				depth_camera = self.depth_camera,
-				video_writer = self.video_writer
+				duration = self.forward_duration
 			),
 			"2_backward": ConstantSequence.ConstantSequence(
 				yaw = self.backward_heading,
