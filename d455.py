@@ -23,7 +23,8 @@ video_path = "data/render/d455_render.mp4"
 writer = cv2.VideoWriter(
 	video_path,
 	cv2.VideoWriter_fourcc('m', 'p', '4', 'v'),
-	(640, 480 * 2)
+	10,
+	(640, int(480 * 2))
 )
 
 for index in range(200):
