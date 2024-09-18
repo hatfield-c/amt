@@ -10,7 +10,7 @@ class FlightColorAlignSequence:
 		self.duration = duration
 		
 		self.perception_cortex = PerceptionCortex.PerceptionCortex()
-		self.pid = Pid(
+		self.pid = Pid.Pid(
 			p_scale = 0.1,
 			i_scale = 0,
 			d_scale = 0
