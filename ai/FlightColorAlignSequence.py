@@ -16,7 +16,7 @@ class FlightColorAlignSequence:
 		self.perception_cortex = PerceptionCortex.PerceptionCortex(depth_camera, video_writer)
 		
 		self.vertical_pid = Pid.Pid(
-			p_scale = 0.1,
+			p_scale = 0.2,
 			i_scale = 0,
 			d_scale = 0
 		)
