@@ -73,7 +73,7 @@ class FlightColorAlignSequence:
 		
 		self.perception_cortex.GetTargetPixelPosition()
 		
-		vertical_error = self.vertical_pid(position[2], self.target_height, velocity[2])
+		vertical_error = self.vertical_pid.ControlStep(position[2], self.target_height, velocity[2])
 		
 		yaw = self.yaw
 		speed = self.speed
