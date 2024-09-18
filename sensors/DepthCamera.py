@@ -21,7 +21,7 @@ class DepthCamera:
 		self.depth_sensor = self.profile.get_device().first_depth_sensor()
 		self.depth_scale = self.depth_sensor.get_depth_scale()
 
-		self.max_depth = 5
+		self.max_depth = 10
 		
 	def GetImageData(self):
 		camera_data = self.data_pipe.wait_for_frames()
