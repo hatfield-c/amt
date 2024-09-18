@@ -30,6 +30,7 @@ max_depth = 5
 '''
 while True:
 	frame = pipe.wait_for_frames()
+	'''
 	depth_frame = frame.get_depth_frame()
 	
 	depth_image = np.asanyarray(depth_frame.get_data())
@@ -39,6 +40,8 @@ while True:
 	depth_image = np.clip(depth_image, 0, 1)
 	depth_image = depth_image * 255
 	depth_image = depth_image.astype(np.uint8)
+	'''
+	depth_image = frame.get_color_frame()
 	
 	cv2.imwrite("data/render/d455_render.png", depth_image)
 	exit()
