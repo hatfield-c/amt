@@ -110,19 +110,13 @@ class RosController(Node):
 				end_direction = self.forward_direction,
 				duration = self.takeoff_duration
 			),
-			#"1_forward": FlightColorAlignSequence.FlightColorAlignSequence(
-			#	yaw = self.forward_heading,
-			#	speed = self.flight_speed,
-			#	direction = self.forward_direction,
-			#	duration = self.forward_duration,
-			#	depth_camera = self.depth_camera,
-			#	video_writer = self.video_writer
-			#),
-			"1_forward": ConstantSequence.ConstantSequence(
+			"1_forward": FlightColorAlignSequence.FlightColorAlignSequence(
 				yaw = self.forward_heading,
 				speed = self.flight_speed,
 				direction = self.forward_direction,
-				duration = self.forward_duration
+				duration = self.forward_duration,
+				depth_camera = self.depth_camera,
+				video_writer = self.video_writer
 			),
 			"2_backward": ConstantSequence.ConstantSequence(
 				yaw = self.backward_heading,
@@ -178,7 +172,7 @@ class RosController(Node):
 			velocity = speed * direction
 			
 			print_header = "[" + str(sequence_state) + " : " + trajectory_sequence.GetTimerValueStr() + "]"
-			print(print_header, heading, speed, direction)
+			print(print_header, heading, speed, direction, self.velocity)
 			
 			if trajectory_sequence.IsComplete():
 				if sequence_state == self.sequence_states[-1]:
