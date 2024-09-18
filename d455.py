@@ -42,6 +42,7 @@ while True:
 	depth_image = depth_image.astype(np.uint8)
 	'''
 	depth_image = frame.get_color_frame()
+	depth_image = np.asanyarray(depth_image.get_data())
 	
 	cv2.imwrite("data/render/d455_render.png", depth_image)
 	exit()
