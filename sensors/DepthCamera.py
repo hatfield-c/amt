@@ -23,10 +23,10 @@ class DepthCamera:
 		frames = self.pipe.wait_for_frames()
 		
 		aligned_frames = self.aligner.process(frames)
-		print("flag b")
+
 		depth_frame = aligned_frames.get_depth_frame()
 		color_frame = aligned_frames.get_color_frame()
-		print("flag c")
+		
 		depth_image = np.asanyarray(depth_frame.get_data())
 		color_image = np.asanyarray(color_frame.get_data())
 		

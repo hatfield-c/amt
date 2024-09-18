@@ -15,23 +15,13 @@ depth_sensor = profile.get_device().first_depth_sensor()
 depth_scale = depth_sensor.get_depth_scale()
 
 max_depth = 5
-'''
-pipe = rs.pipeline()
-cfg = rs.config()
 
-cfg.enable_stream(rs.stream.depth, 640, 480, rs.format.z16, 30)
-
-profile = pipe.start(cfg)
-
-depth_sensor = profile.get_device().first_depth_sensor()
-depth_scale = depth_sensor.get_depth_scale()
-
-max_depth = 5
-'''
 while True:
-	frame = pipe.wait_for_frames()
-	'''
-	depth_frame = frame.get_depth_frame()
+	camera_data = pipe.wait_for_frames()
+	camera_data = aligner.process(camera_data)
+	
+	depth_frame = camera_data.get_depth_frame()
+	color_frame = camera_data.get_color_frame()
 	
 	depth_image = np.asanyarray(depth_frame.get_data())
 	depth_image = depth_image.astype(np.float32)
@@ -40,9 +30,8 @@ while True:
 	depth_image = np.clip(depth_image, 0, 1)
 	depth_image = depth_image * 255
 	depth_image = depth_image.astype(np.uint8)
-	'''
-	depth_image = frame.get_color_frame()
-	depth_image = np.asanyarray(depth_image.get_data())
+	
+	color_image = np.asanyarray(color_frame.get_data())
 	
 	cv2.imwrite("data/render/d455_render.png", depth_image)
 	exit()
