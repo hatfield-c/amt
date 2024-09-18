@@ -5,8 +5,10 @@ import ai.PerceptionCortex as PerceptionCortex
 import ai.Pid as Pid
 
 class FlightColorAlignSequence:
-	def __init__(self, speed, duration, depth_camera, video_writer = None):
+	def __init__(self, yaw, speed, direction, duration, depth_camera, video_writer = None):
+		self.yaw = yaw
 		self.speed = speed
+		self.direction = direction
 		self.duration = duration
 		
 		self.depth_camera = depth_camera
@@ -61,9 +63,9 @@ class FlightColorAlignSequence:
 		
 		self.perception_cortex.GetTargetPixelPosition()
 		
-		yaw = 0.0
-		speed = 0.0
-		direction = np.ones(3, np.float32)
+		yaw = self.yaw
+		speed = self.speed
+		direction = self.direction
 		
 		direction_size = np.linalg.norm(direction)
 		if direction_size == 0:

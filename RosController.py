@@ -101,33 +101,35 @@ class RosController(Node):
 		self.backward_direction = -self.forward_direction
 
 		self.trajectory_sequences = {
-			#"0_takeoff": TrajectorySequence.TrajectorySequence(
-			#	start_yaw = self.forward_heading,
-			#	start_speed = self.takeoff_speed,
-			#	start_direction = self.up_direction,
-			#	end_yaw = self.forward_heading,
-			#	end_speed = self.flight_speed,
-			#	end_direction = self.forward_direction,
-			#	duration = self.takeoff_duration
-			#),
+			"0_takeoff": TrajectorySequence.TrajectorySequence(
+				start_yaw = self.forward_heading,
+				start_speed = self.takeoff_speed,
+				start_direction = self.up_direction,
+				end_yaw = self.forward_heading,
+				end_speed = self.flight_speed,
+				end_direction = self.forward_direction,
+				duration = self.takeoff_duration
+			),
 			"1_forward": FlightColorAlignSequence.FlightColorAlignSequence(
-				speed = self.flight_speed * 0,
+				yaw = self.forward_heading,
+				speed = self.flight_speed,
+				direction = self.forward_heading,
 				duration = self.forward_duration,
 				depth_camera = self.depth_camera,
 				video_writer = self.video_writer
 			),
-			#"2_backward": ConstantSequence.ConstantSequence(
-			#	yaw = self.backward_heading,
-			#	speed = self.flight_speed,
-			#	direction = self.backward_direction,
-			#	duration = self.backward_duration
-			#),
-			#"4_brakes": ConstantSequence.ConstantSequence(
-			#	yaw = self.backward_heading,
-			#	speed = self.flight_speed * 0,
-			#	direction = self.backward_direction * 0,
-			#	duration = self.backward_duration
-			#),
+			"2_backward": ConstantSequence.ConstantSequence(
+				yaw = self.backward_heading,
+				speed = self.flight_speed,
+				direction = self.backward_direction,
+				duration = self.backward_duration
+			),
+			"4_brakes": ConstantSequence.ConstantSequence(
+				yaw = self.backward_heading,
+				speed = self.flight_speed * 0,
+				direction = self.backward_direction,
+				duration = self.backward_duration
+			),
 		}
 		
 		self.sequence_states = sorted(list(self.trajectory_sequences.keys()))
