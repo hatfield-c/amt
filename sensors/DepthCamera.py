@@ -25,6 +25,8 @@ class DepthCamera:
 
 		self.max_depth = 5
 		
+		self.is_write_video = True
+		
 	def GetImageData(self):
 		camera_data = self.data_pipe.wait_for_frames()
 		camera_data = self.aligner.process(camera_data)
@@ -51,9 +53,25 @@ class DepthCamera:
 		merged_image = np.concatenate((depth_image, color_image), axis = 0)
 	
 		index_str = str(index).zfill(6)
-		file_name = "data/render/d455_render_" + index_str +".png"
+		file_name = "data/render/d455_render_" + index_str +".bmp"
 		cv2.imwrite(file_name, merged_image)
+		
+	def WriteToVideo(self, depth_image, color_image):
+		depth_image = depth_image.reshape(480, 640, 1)
+		depth_image = np.tile(depth_image, (1, 3))
 
+		merged_image = np.concatenate((depth_image, color_image), axis = 0)
 
+		video_path = "data/render/d455_render.mp4"
+
+		writer = cv2.VideoWriter(
+			video_path,
+			cv2.VideoWriter_fourcc('m', 'p', '4', 'v'),
+			10,
+			(self.width, self.height)
+		)
+
+		writer.write(merged_image)
+		writer.release()
 
 

@@ -37,14 +37,22 @@ for index in range(200):
 	
 	color_image = np.asanyarray(color_frame.get_data())
 	
-	#todo: delete
 	depth_image = depth_image.reshape(480, 640, 1)
 	depth_image = np.tile(depth_image, (1, 3))
 
 	merged_image = np.concatenate((depth_image, color_image), axis = 0)
 	
-	file_name = "data/render/d455_render_" + str(index) +".bmp"
-	cv2.imwrite(file_name, merged_image)
+	video_path = "data/render/d455_render.mp4"
+
+	writer = cv2.VideoWriter(
+		video_path,
+		cv2.VideoWriter_fourcc('m', 'p', '4', 'v'),
+		10,
+		(640, 480)
+	)
+
+	writer.write(merged_image)
+	writer.release()
 	
 	end_time = time.time() - start_time
 	
