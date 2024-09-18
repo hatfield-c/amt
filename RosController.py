@@ -113,7 +113,7 @@ class RosController(Node):
 			"1_forward": FlightColorAlignSequence.FlightColorAlignSequence(
 				yaw = self.forward_heading,
 				speed = self.flight_speed,
-				direction = self.forward_heading,
+				direction = self.forward_direction,
 				duration = self.forward_duration,
 				depth_camera = self.depth_camera,
 				video_writer = self.video_writer
