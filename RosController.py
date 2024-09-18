@@ -18,10 +18,11 @@ from px4_msgs.msg import VehicleLocalPosition
 import ai.TrajectorySequence as TrajectorySequence
 import ai.ConstantSequence as ConstantSequence
 import ai.FlightColorAlignSequence as FlightColorAlignSequence
+import VideoWriter
 
 class RosController(Node):
 
-	def __init__(self):
+	def __init__(self, is_write_video = False):
 		super().__init__('minimal_publisher')
 		
 		self.forward_heading = 0
@@ -83,6 +84,10 @@ class RosController(Node):
 		update_period = 0.02
 		self.update_timer = self.create_timer(update_period, self.Update)
 		
+		self.video_writer = None
+		if is_write_video:
+			self.video_writer = VideoWriter.VideoWriter()
+		
 	def ResetOrientation(self):
 		self.forward_heading = self.heading_smooth
 		self.backward_heading = self.forward_heading - math.pi
@@ -104,7 +109,8 @@ class RosController(Node):
 			#),
 			"1_forward": FlightColorAlignSequence.FlightColorAlignSequence(
 				speed = self.flight_speed * 0,
-				duration = self.forward_duration
+				duration = self.forward_duration,
+				video_writer = self.video_writer
 			),
 			#"2_backward": ConstantSequence.ConstantSequence(
 			#	yaw = self.backward_heading,

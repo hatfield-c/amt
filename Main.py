@@ -6,16 +6,25 @@ import traceback
 
 import RosController as RosController
 
-#with open('data/log/tau_log.txt', "w") as sys.stdout:
-try:
+is_log_stdout = False
+is_write_video = True
 
+def Main():
 	rclpy.init()
-	ros_controller = RosController.RosController()
+	ros_controller = RosController.RosController(is_write_video = is_write_video)
 	print("<uORB RosController Initialzed!>")
 
 	rclpy.spin(ros_controller)
 	ros_controller.destroy_node()
 	rclpy.shutdown()
-except Exception as e:
-	print("Exception occured!")
-	print(traceback.format_exc())
+		
+	if ros_controller.video_writer is not None:
+		ros_controller.video_writer.Release()
+
+	print("<uORB RosController Successfully closed.>")
+
+if is_log_stdout:
+	with open('data/log/tau_log.txt', "w") as sys.stdout:
+		Main()
+else:
+	Main()

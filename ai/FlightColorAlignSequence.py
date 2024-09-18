@@ -5,11 +5,11 @@ import ai.PerceptionCortex as PerceptionCortex
 import ai.Pid as Pid
 
 class FlightColorAlignSequence:
-	def __init__(self, speed, duration):
+	def __init__(self, speed, duration, video_writer = None):
 		self.speed = speed
 		self.duration = duration
 		
-		self.perception_cortex = PerceptionCortex.PerceptionCortex()
+		self.perception_cortex = PerceptionCortex.PerceptionCortex(video_writer)
 		self.pid = Pid.Pid(
 			p_scale = 0.1,
 			i_scale = 0,

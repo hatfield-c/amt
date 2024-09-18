@@ -6,10 +6,9 @@ import torch
 import sensors.DepthCamera as DepthCamera
 
 class PerceptionCortex:
-	def __init__(
-		self
-	):
+	def __init__(self, video_writer):
 		self.depth_camera = DepthCamera.DepthCamera()
+		self.video_writer = video_writer
 		
 		voting_rounds = 0
 		median_size = 0
@@ -48,8 +47,8 @@ class PerceptionCortex:
 	
 		depth_image, color_image = self.depth_camera.GetImageData()
 		
-		self.depth_camera.SaveImageData(depth_image, color_image)
-		exit()
+		if self.video_writer is not None:
+			self.video_writer.WritePair(depth_image, color_image)
 	
 		return
 	
