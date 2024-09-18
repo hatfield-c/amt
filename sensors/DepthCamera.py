@@ -16,6 +16,11 @@ class DepthCamera:
 		self.rs_config.enable_stream(rs.stream.depth, self.width, self.height, rs.format.z16, self.fps)
 		self.rs_config.enable_stream(rs.stream.color, self.width, self.height, rs.format.bgr8, self.fps)
 		
+		ctx = rs.context()
+		devices = ctx.query_devices()
+		for dev in devices:
+			dev.hardware_reset()
+		
 		self.profile = self.data_pipe.start(self.rs_config)
 
 		self.depth_sensor = self.profile.get_device().first_depth_sensor()
