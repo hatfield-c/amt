@@ -41,7 +41,7 @@ class PerceptionCortex:
 
 		self.img_padder = torch.nn.ReplicationPad2d(1).cuda()
 
-	def GetTargetPixelPosition(self, rgb_frame):
+	def GetTargetPixelPosition(self):
 	
 		depth_image, color_image = self.depth_camera.GetImageData()
 		
@@ -50,10 +50,10 @@ class PerceptionCortex:
 	
 		return
 	
-		binary_frame = self.BlobbingFilter(rgb_frame)
+		binary_frame = self.BlobbingFilter(color_image)
 		contours = cv2.findContours(binary_frame, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[0]
 
-		tracker_frame = self.TrackingFilter(rgb_frame, binary_frame)
+		tracker_frame = self.TrackingFilter(color_image, binary_frame)
 
 		tracker_bounds = self.GetTrackerBounds(tracker_frame)
 
