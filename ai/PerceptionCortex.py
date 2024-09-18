@@ -50,7 +50,7 @@ class PerceptionCortex:
 		
 		merged_image = np.concatenate((depth_image, color_image), dim = 0)
 		
-		img = cv2.imwrite("d455_render.png", merged_image)
+		img = cv2.imwrite("data/render/d455_render.png", merged_image)
 		exit()
 	
 		return
