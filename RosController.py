@@ -97,7 +97,7 @@ class RosController(Node):
 		if self.forward_heading < 0:
 			self.backward_heading = self.forward_heading + math.pi
 			
-		self.forward_direction = np.array([math.cos(self.forward_heading), math.sin(self.forward_heading), 0], dtype = np.float32)
+		self.forward_direction = np.array([math.cos(self.forward_heading), math.sin(self.forward_heading), 1], dtype = np.float32)
 		self.backward_direction = -self.forward_direction
 
 		self.trajectory_sequences = {
