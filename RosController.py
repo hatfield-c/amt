@@ -119,12 +119,12 @@ class RosController(Node):
 				depth_camera = self.depth_camera,
 				video_writer = self.video_writer
 			),
-			"2_backward": ConstantSequence.ConstantSequence(
-				yaw = self.backward_heading,
-				speed = self.flight_speed,
-				direction = self.backward_direction,
-				duration = self.backward_duration
-			),
+			#"2_backward": ConstantSequence.ConstantSequence(
+			#	yaw = self.backward_heading,
+			#	speed = self.flight_speed,
+			#	direction = self.backward_direction,
+			#	duration = self.backward_duration
+			#),
 			"4_brakes": ConstantSequence.ConstantSequence(
 				yaw = self.backward_heading,
 				speed = self.flight_speed * 0,
