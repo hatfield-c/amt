@@ -79,14 +79,14 @@ class RosController(Node):
 		self.system_state = "warmup"
 		self.cycles = 0
 		
+		self.video_writer = None
+		if is_write_video:
+			self.video_writer = VideoWriter.VideoWriter()
+		
 		self.ResetOrientation()
 		
 		update_period = 0.02
 		self.update_timer = self.create_timer(update_period, self.Update)
-		
-		self.video_writer = None
-		if is_write_video:
-			self.video_writer = VideoWriter.VideoWriter()
 		
 	def ResetOrientation(self):
 		self.forward_heading = self.heading_smooth
