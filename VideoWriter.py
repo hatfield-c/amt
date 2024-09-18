@@ -23,4 +23,4 @@ class VideoWriter:
 		self.video_object.write(img)
 		
 	def Release(self):
-		self.video_object.Release()
+		self.video_object.release()
