@@ -23,7 +23,7 @@ def Main():
 	print("<uORB RosController Successfully closed.>")
 
 if is_log_stdout:
-	with open('data/log/tau_log.txt', "w") as sys.stdout:
+	with open('/home/jetson/amt/data/log/tau_log.txt', "w") as sys.stdout:
 		Main()
 else:
 	Main()
