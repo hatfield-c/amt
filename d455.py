@@ -7,15 +7,21 @@ cfg = rs.config()
 
 cfg.enable_stream(rs.stream.depth, 640, 480, rs.format.z16, 30)
 
-pipe.start(cfg)
+profile = pipe.start(cfg)
 
 while True:
 	frame = pipe.wait_for_frames()
 	depth_frame = frame.get_depth_frame()
 	
 	depth_image = np.asanyarray(depth_frame.get_data())
-	depth_colormap = cv2.applyColorMap(cv2.convertScaleAbs(depth_image, alpha = 0.03), cv2.COLORMAP_JET)
+	
 	cv2.imwrite("data/render/d455_render.png", depth_image)
+	
+	depth_sensor = profile.get_device().first_depth_sensor()
+	depth_scale = depth_sensor.get_depth_scale()
+	
+	print(depth_scale)
+	
 	exit()
 	cv2.imshow("depth", depth_image)
 	
