@@ -33,7 +33,11 @@ while True:
 	
 	color_image = np.asanyarray(color_frame.get_data())
 	
-	merged_image = np.concatenate((depth_image, color_image), dim = 0)
+	#todo: delete
+	depth_image = depth_image.reshape(-1, 1)
+	depth_image = np.tile(depth_image, (1, 3))
+	
+	merged_image = np.concatenate((depth_image, color_image), axis = 0)
 	
 	cv2.imwrite("data/render/d455_render.png", merged_image)
 	exit()
