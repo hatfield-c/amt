@@ -96,7 +96,7 @@ class RosController(Node):
 			
 		self.forward_direction = np.array([math.cos(self.forward_heading), math.sin(self.forward_heading), 0], dtype = np.float32)
 		self.backward_direction = -self.forward_direction
-			
+		print("reset")
 		self.trajectory_sequences = {
 			#"0_takeoff": TrajectorySequence.TrajectorySequence(
 			#	start_yaw = self.forward_heading,
