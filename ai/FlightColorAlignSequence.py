@@ -10,6 +10,7 @@ class FlightColorAlignSequence:
 		self.duration = duration
 		
 		self.depth_camera = depth_camera
+		self.video_writer = video_writer
 		self.perception_cortex = PerceptionCortex.PerceptionCortex(depth_camera, video_writer)
 		self.pid = Pid.Pid(
 			p_scale = 0.1,
@@ -29,6 +30,9 @@ class FlightColorAlignSequence:
 		
 		if time.time() - self.start_time > self.duration:
 			is_complete = True
+			
+			if self.video_writer is not None:
+				self.video_writer.Release()
 			
 		return is_complete
 		

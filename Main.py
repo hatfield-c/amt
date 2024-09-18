@@ -19,8 +19,6 @@ def Main():
 	rclpy.shutdown()
 	
 	ros_controller.depth_camera.data_pipe.stop()
-	if ros_controller.video_writer is not None:
-		ros_controller.video_writer.Release()
 
 	print("<uORB RosController Successfully closed.>")
 
