@@ -50,5 +50,7 @@ class ConstantSequence:
 			
 		direction = direction / direction_size
 		
-		return yaw, speed, direction
+		velocity = speed * direction
+		
+		return yaw, velocity
 		

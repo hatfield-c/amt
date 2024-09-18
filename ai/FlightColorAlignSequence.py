@@ -79,13 +79,14 @@ class FlightColorAlignSequence:
 		speed = self.speed
 		direction = self.direction
 		
-		direction[2] = -vertical_error
-		
 		direction_size = np.linalg.norm(direction)
 		if direction_size == 0:
 			direction_size = 1
 			
 		direction = direction / direction_size
 		
-		return yaw, speed, direction
+		velocity = speed * direction
+		velocity[2] = vertical_error
+		
+		return yaw, velocity
 		

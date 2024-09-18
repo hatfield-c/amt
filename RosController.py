@@ -174,11 +174,12 @@ class RosController(Node):
 				"velocity": self.velocity
 			}
 			
-			heading, speed, direction = trajectory_sequence.GetTrajectory(data)
-			velocity = speed * direction
+			heading, velocity = trajectory_sequence.GetTrajectory(data)
 			
 			print_header = "[" + str(sequence_state) + " : " + trajectory_sequence.GetTimerValueStr() + "]"
-			print(print_header, heading, speed, direction, self.velocity)
+			print(print_header)
+			print("   ", heading, velocity)
+			print("   ", self.position, self.velocity)
 			
 			if trajectory_sequence.IsComplete():
 				if sequence_state == self.sequence_states[-1]:
