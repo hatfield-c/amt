@@ -171,7 +171,7 @@ class RosController(Node):
 			
 			data = {
 				"position": self.position,
-				"velocty": self.velocity
+				"velocity": self.velocity
 			}
 			
 			heading, speed, direction = trajectory_sequence.GetTrajectory(data)
