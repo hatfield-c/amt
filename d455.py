@@ -18,6 +18,15 @@ depth_scale = depth_sensor.get_depth_scale()
 max_depth = 5
 
 avg_runtime = 0
+
+video_path = "data/render/d455_render.mp4"
+writer = cv2.VideoWriter(
+	video_path,
+	cv2.VideoWriter_fourcc('m', 'p', '4', 'v'),
+	10,
+	(640, 480)
+)
+
 for index in range(200):
 	start_time = time.time()
 	
@@ -41,15 +50,6 @@ for index in range(200):
 	depth_image = np.tile(depth_image, (1, 3))
 
 	merged_image = np.concatenate((depth_image, color_image), axis = 0)
-	
-	video_path = "data/render/d455_render.mp4"
-
-	writer = cv2.VideoWriter(
-		video_path,
-		cv2.VideoWriter_fourcc('m', 'p', '4', 'v'),
-		10,
-		(640, 480)
-	)
 
 	writer.write(merged_image)
 	
