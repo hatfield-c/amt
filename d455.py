@@ -23,8 +23,7 @@ video_path = "data/render/d455_render.mp4"
 writer = cv2.VideoWriter(
 	video_path,
 	cv2.VideoWriter_fourcc('m', 'p', '4', 'v'),
-	10,
-	(640, 480)
+	(640, 480 * 2)
 )
 
 for index in range(200):
@@ -51,7 +50,6 @@ for index in range(200):
 	depth_image = np.tile(depth_image, (1, 3))
 
 	merged_image = np.concatenate((depth_image, color_image), axis = 0)
-	merged_image = cv2.resize(merged_image, (640, 480), interpolation = cv2.INTER_NEAREST)
 
 	writer.write(merged_image)
 	
