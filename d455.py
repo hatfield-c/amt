@@ -45,11 +45,13 @@ for index in range(200):
 	depth_image = depth_image.astype(np.uint8)
 	
 	color_image = np.asanyarray(color_frame.get_data())
+	color_image = color_image.astype(np.uint8)
 	
 	depth_image = depth_image.reshape(480, 640, 1)
 	depth_image = np.tile(depth_image, (1, 3))
 
 	merged_image = np.concatenate((depth_image, color_image), axis = 0)
+	merged_image = cv2.resize(merged_image, (640, 480), interpolation = cv2.INTER_NEAREST)
 
 	writer.write(merged_image)
 	
