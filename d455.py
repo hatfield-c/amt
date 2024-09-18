@@ -9,20 +9,26 @@ cfg.enable_stream(rs.stream.depth, 640, 480, rs.format.z16, 30)
 
 profile = pipe.start(cfg)
 
+depth_sensor = profile.get_device().first_depth_sensor()
+depth_scale = depth_sensor.get_depth_scale()
+
+max_depth = 5
+
 while True:
 	frame = pipe.wait_for_frames()
 	depth_frame = frame.get_depth_frame()
 	
 	depth_image = np.asanyarray(depth_frame.get_data())
+	depth_image = depth_image.astype(np.float32)
+	depth_image = depth_image * depth_scale
+	depth_image = depth_image / max_depth
+	depth_image = np.clip(depth_image, 0, 1)
+	depth_image = depth_image * 255
+	depth_image = depth_image.astype(np.uint8)
 	
 	cv2.imwrite("data/render/d455_render.png", depth_image)
-	
-	depth_sensor = profile.get_device().first_depth_sensor()
-	depth_scale = depth_sensor.get_depth_scale()
-	
-	print(depth_scale)
-	
 	exit()
+	
 	cv2.imshow("depth", depth_image)
 	
 	if cv2.waitKey(1) == ord('q'):
