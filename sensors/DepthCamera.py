@@ -10,7 +10,7 @@ class DepthCamera:
 		self.fps = 30
 		
 		self.data_pipe = rs.pipeline()
-		self.aligner = rs.align(rs.stream_color)
+		self.aligner = rs.align(rs.stream.color)
 		
 		self.rs_config = rs.config()
 		self.rs_config.enable_stream(rs.stream.depth, self.width, self.height, rs.format.z16, self.fps)
