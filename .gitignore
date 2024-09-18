@@ -1,4 +1,6 @@
 # amt
+data/log/*
+data/render/*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
