@@ -16,7 +16,7 @@ class FlightColorAlignSequence:
 		self.perception_cortex = PerceptionCortex.PerceptionCortex(depth_camera, video_writer)
 		
 		self.vertical_pid = Pid.Pid(
-			p_scale = 0.2,
+			p_scale = 1,
 			i_scale = 0,
 			d_scale = 0
 		)
@@ -79,7 +79,7 @@ class FlightColorAlignSequence:
 		speed = self.speed
 		direction = self.direction
 		
-		direction[2] = vertical_error
+		direction[2] = -vertical_error
 		
 		direction_size = np.linalg.norm(direction)
 		if direction_size == 0:
