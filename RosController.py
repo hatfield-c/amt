@@ -38,7 +38,7 @@ class RosController(Node):
 		self.flight_speed = 10.0
 		
 		self.takeoff_duration = 5
-		self.forward_duration = 8
+		self.forward_duration = 3
 		self.backward_duration = 16
 		
 		qos_profile = QoSProfile(
@@ -100,8 +100,8 @@ class RosController(Node):
 		self.forward_direction = np.array([math.cos(self.forward_heading), math.sin(self.forward_heading), 0], dtype = np.float32)
 		self.backward_direction = -self.forward_direction
 		
-		self.forward_direction[2] = -0.1
-		self.backward_direction[2] = -0.1
+		self.forward_direction[2] = -0.01
+		self.backward_direction[2] = -0.01
 
 		self.trajectory_sequences = {
 			"0_takeoff": TrajectorySequence.TrajectorySequence(
