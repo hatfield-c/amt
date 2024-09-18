@@ -1,12 +1,22 @@
 import time
 import numpy as np
 
+import ai.PerceptionCortex as PerceptionCortex
+import ai.Pid as Pid
+
 class FlightColorAlignSequence:
-	def __init__(self, yaw, speed, direction, duration):
-		self.yaw = yaw
+	def __init__(self, speed, duration):
 		self.speed = speed
-		self.direction = direction
 		self.duration = duration
+		
+		self.perception_cortex = PerceptionCortex()
+		self.pid = Pid(
+			p_scale = 0.1,
+			i_scale = 0,
+			d_scale = 0
+		)
+		
+		self.target_state = np.array([320, 0])
 		
 		self.start_time = None
 		
@@ -38,13 +48,13 @@ class FlightColorAlignSequence:
 	
 	def GetTrajectory(self):
 		if self.start_time is None:
-			return self.start_yaw, self.start_speed, self.start_direction
+			return None
 		
-		yaw = self.yaw
-		speed = self.speed
-		direction = self.direction
+		self.perception_cortex.GetTargetPixelPosition()
 		
-		
+		yaw = 0
+		speed = 0
+		direction = np.ones(3, np.float32)
 		
 		direction_size = np.linalg.norm(direction)
 		if direction_size == 0:

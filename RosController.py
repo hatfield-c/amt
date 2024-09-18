@@ -17,7 +17,7 @@ from px4_msgs.msg import VehicleLocalPosition
 
 import ai.TrajectorySequence as TrajectorySequence
 import ai.ConstantSequence as ConstantSequence
-#import ai.FlightColorAlignSequence as FlightColorAlignSequence
+import ai.FlightColorAlignSequence as FlightColorAlignSequence
 
 class RosController(Node):
 
@@ -102,10 +102,8 @@ class RosController(Node):
 				end_direction = self.forward_direction,
 				duration = self.takeoff_duration
 			),
-			"1_forward": ConstantSequence.ConstantSequence(
-				yaw = self.forward_heading,
+			"1_forward": FlightColorAlignSequence.FlightColorAlignSequence(
 				speed = self.flight_speed,
-				direction = self.forward_direction,
 				duration = self.forward_duration
 			),
 			"2_backward": ConstantSequence.ConstantSequence(
