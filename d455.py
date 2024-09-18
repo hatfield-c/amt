@@ -1,6 +1,7 @@
 import pyrealsense2 as rs
 import numpy as np
 import cv2
+import time
 
 pipe = rs.pipeline()
 aligner = rs.align(rs.stream.color)
@@ -16,7 +17,10 @@ depth_scale = depth_sensor.get_depth_scale()
 
 max_depth = 5
 
-while True:
+avg_runtime = 0
+for index in range(200):
+	start_time = time.time()
+	
 	camera_data = pipe.wait_for_frames()
 	camera_data = aligner.process(camera_data)
 	
@@ -39,12 +43,13 @@ while True:
 
 	merged_image = np.concatenate((depth_image, color_image), axis = 0)
 	
-	cv2.imwrite("data/render/d455_render.png", merged_image)
-	exit()
+	file_name = "data/render/d455_render_" + str(index) +".bmp"
+	cv2.imwrite(file_name, merged_image)
 	
-	cv2.imshow("depth", depth_image)
+	end_time = time.time() - start_time
 	
-	if cv2.waitKey(1) == ord('q'):
-		break
+	avg_runtime = (avg_runtime + end_time) / 2
+	
+print("Average frame time:", avg_runtime)
 	
 pipe.stop()

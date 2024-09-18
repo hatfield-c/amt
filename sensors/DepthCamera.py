@@ -44,8 +44,14 @@ class DepthCamera:
 		
 		return depth_image, color_image
 	
+	def SaveImageData(self, depth_image, color_image, index = 0):
+		depth_image = depth_image.reshape(480, 640, 1)
+		depth_image = np.tile(depth_image, (1, 3))
 
+		merged_image = np.concatenate((depth_image, color_image), axis = 0)
 
+		file_name = "data/render/d455_render_" + str(index) +".png"
+		cv2.imwrite(file_name, merged_image)
 
 
 

@@ -48,12 +48,7 @@ class PerceptionCortex:
 	
 		depth_image, color_image = self.depth_camera.GetImageData()
 		
-		depth_image = depth_image.reshape(480, 640, 1)
-		depth_image = np.tile(depth_image, (1, 3))
-
-		merged_image = np.concatenate((depth_image, color_image), axis = 0)
-
-		cv2.imwrite("data/render/d455_render.png", merged_image)
+		self.depth_camera.SaveImageData(depth_image, color_image)
 		exit()
 	
 		return
