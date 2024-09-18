@@ -44,8 +44,6 @@ class ConstantSequence:
 		speed = self.speed
 		direction = self.direction
 		
-		
-		
 		direction_size = np.linalg.norm(direction)
 		if direction_size == 0:
 			direction_size = 1
