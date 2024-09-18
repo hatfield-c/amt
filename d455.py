@@ -52,12 +52,12 @@ for index in range(200):
 	)
 
 	writer.write(merged_image)
-	writer.release()
 	
 	end_time = time.time() - start_time
 	
 	avg_runtime = (avg_runtime + end_time) / 2
 	
 print("Average frame time:", avg_runtime)
-	
+
+writer.release()
 pipe.stop()
