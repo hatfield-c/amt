@@ -95,8 +95,6 @@ class PerceptionCortex:
 	def BlobbingFilter(self, rgb_frame):
 		lab_frame = cv2.cvtColor(rgb_frame, cv2.COLOR_BGR2Lab)
 		
-		return lab_frame
-
 		binary_frame = cv2.inRange(lab_frame, self.chroma_lower, self.chroma_upper)
 		binary_frame = self.VotePool(binary_frame)
 		binary_frame = binary_frame.astype(np.uint8)
