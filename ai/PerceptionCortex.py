@@ -51,15 +51,15 @@ class PerceptionCortex:
 			
 		contours = cv2.findContours(binary_frame, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[0]
 
-		camera_position = self.GetContourPosition(contours)
+		target_pixel_position = self.GetContourPosition(contours)
 
-		cv2.line(color_image, (camera_position[0], 0), (camera_position[0], 479), (0, 255, 0), 2)
-		cv2.line(color_image, (0, camera_position[1]), (639, camera_position[1]), (0, 255, 0), 2)
+		#cv2.line(color_image, (camera_position[0], 0), (camera_position[0], 479), (0, 255, 0), 2)
+		#cv2.line(color_image, (0, camera_position[1]), (639, camera_position[1]), (0, 255, 0), 2)
 
-		cv2.imshow("render", color_image)
-		cv2.waitKey(1)
+		#cv2.imshow("render", color_image)
+		#cv2.waitKey(1)
 
-		return camera_position
+		return target_pixel_position
 
 	def GetContourPosition(self, contours):
 		biggest_area = -1

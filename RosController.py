@@ -170,6 +170,7 @@ class RosController(Node):
 			trajectory_sequence = self.trajectory_sequences[sequence_state]
 			
 			data = {
+				"heading": self.heading_smooth,
 				"position": self.position,
 				"velocity": self.velocity
 			}

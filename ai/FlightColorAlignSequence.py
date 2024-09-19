@@ -1,14 +1,13 @@
 import time
 import numpy as np
+import math
 
 import ai.PerceptionCortex as PerceptionCortex
 import ai.Pid as Pid
 
 class FlightColorAlignSequence:
-	def __init__(self, yaw, speed, direction, duration, depth_camera, video_writer = None):
-		self.yaw = yaw
+	def __init__(self, speed, duration, depth_camera, video_writer = None):
 		self.speed = speed
-		self.direction = direction
 		self.duration = duration
 		
 		self.depth_camera = depth_camera
@@ -21,12 +20,12 @@ class FlightColorAlignSequence:
 			d_scale = 0
 		)
 		self.lateral_pid = Pid.Pid(
-			p_scale = 0.1,
+			p_scale = 1,
 			i_scale = 0,
 			d_scale = 0
 		)
 		
-		self.target_state = np.array([320, 0])
+		self.target_lateral = np.array([320, 0])
 		self.target_height = -5
 		
 		self.start_time = None
@@ -68,16 +67,25 @@ class FlightColorAlignSequence:
 		if self.start_time is None:
 			return None
 		
+		heading = data["heading"]
 		position = data["position"]
 		velocity = data["velocity"]
 		
-		self.perception_cortex.GetTargetPixelPosition()
+		pixel_position = self.perception_cortex.GetTargetPixelPosition()
 		
+		lateral_error = self.lateral_pid.ControlStep(pixel_position[0], self.target_lateral)
 		vertical_error = self.vertical_pid.ControlStep(position[2], self.target_height, velocity[2])
 		
-		yaw = self.yaw
+		yaw = heading + lateral_error
 		speed = self.speed
-		direction = self.direction
+		direction = np.array(
+			[
+				math.cos(yaw),
+				math.sin(yaw),
+				0
+			],
+			np.float32
+		)
 		
 		direction_size = np.linalg.norm(direction)
 		if direction_size == 0:
