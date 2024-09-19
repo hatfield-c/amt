@@ -97,7 +97,7 @@ class PerceptionCortex:
 		
 		binary_frame = cv2.inRange(lab_frame, self.chroma_lower, self.chroma_upper)
 		print(np.max(binary_frame))
-		return binary_frame
+		return lab_frame
 		
 		binary_frame = self.VotePool(binary_frame)
 		binary_frame = binary_frame.astype(np.uint8)
