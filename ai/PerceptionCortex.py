@@ -12,7 +12,7 @@ class PerceptionCortex:
 		median_size = 5
 		dilate_size = -1
 		chroma_center = np.array([77, 43, 255], np.float32)
-		chroma_width = np.array([30, 12, 15], np.float32)
+		chroma_width = np.array([30, 12, 15], np.float32) * 100
 		
 		self.voting_rounds = voting_rounds
 		self.median_size = median_size
