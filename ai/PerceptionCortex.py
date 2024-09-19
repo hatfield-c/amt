@@ -43,12 +43,10 @@ class PerceptionCortex:
 	
 		depth_image, color_image = self.depth_camera.GetImageData()
 		
-		binary_frame = self.BlobbingFilter(color_image)
-		
-		
 		if self.video_writer is not None:
 			self.video_writer.WritePair(depth_image, color_image)
-			
+		
+		binary_frame = self.BlobbingFilter(color_image)
 		contours = cv2.findContours(binary_frame, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[0]
 
 		target_pixel_position = self.GetContourPosition(contours)
