@@ -33,8 +33,6 @@ class PerceptionCortex:
 		if self.dilate_size % 2 == 0:
 			self.dilate_size += 1
 
-		tracker_dilate_size = 20
-		self.tracker_dilate_kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (tracker_dilate_size, tracker_dilate_size))
 		self.depth_dilate_kernel = None
 		if self.dilate_size > 2:
 			self.depth_dilate_kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (dilate_size, dilate_size))
@@ -47,26 +45,21 @@ class PerceptionCortex:
 		
 		binary_frame = self.BlobbingFilter(color_image)
 		
-		cv2.imshow("render", binary_frame)
-		cv2.waitKey(1)
 		
 		if self.video_writer is not None:
-			#self.video_writer.WritePair(depth_image, color_image)
-			self.video_writer.WritePair(binary_frame, color_image)
-		
-		return
-		
+			self.video_writer.WritePair(depth_image, color_image)
+			
 		contours = cv2.findContours(binary_frame, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[0]
 
-		tracker_frame = self.TrackingFilter(color_image, binary_frame)
+		camera_position = self.GetContourPosition(contours)
 
-		tracker_bounds = self.GetTrackerBounds(tracker_frame)
+		cv2.line(color_image, (camera_position[0], 0), (camera_position[0], 479), (0, 255, 0), 2)
+		cv2.line(color_image, (0, camera_position[1]), (639, camera_position[1]), (0, 255, 0), 2)
 
-		camera_position = np.array([0, 0, 0])
-		if tracker_bounds is not None:
-			camera_position = self.GetContourPosition(contours, tracker_bounds)
+		cv2.imshow("render", color_image)
+		cv2.waitKey(1)
 
-		return camera_position, binary_frame, tracker_frame
+		return camera_position
 
 	def GetContourPosition(self, contours):
 		biggest_area = -1
@@ -84,13 +77,6 @@ class PerceptionCortex:
 				position = position_candidate
 
 		return position
-
-	def TrackingFilter(self, rgb_frame, binary_frame):
-		mask_frame = cv2.morphologyEx(binary_frame, cv2.MORPH_DILATE, self.tracker_dilate_kernel)
-		mask_frame = cv2.cvtColor(mask_frame, cv2.COLOR_GRAY2BGR)
-		tracker_frame = cv2.bitwise_and(rgb_frame, mask_frame)
-
-		return tracker_frame
 
 	def BlobbingFilter(self, rgb_frame):
 		lab_frame = cv2.cvtColor(rgb_frame, cv2.COLOR_BGR2Lab)
@@ -138,15 +124,3 @@ class PerceptionCortex:
 		img = img.cpu().numpy()
 
 		return img
-
-	def GetTrackerBounds(self, img):
-		if self.drone_tracker is None:
-			return None
-
-		is_seen, tracker_bounds = self.drone_tracker.update(img)
-		tracker_bounds = np.array(tracker_bounds)
-
-		alpha = 0.1
-		tracker_bounds = (alpha * self.last_tracker_bounds) + ((1 - alpha) * tracker_bounds)
-
-		return tracker_bounds
