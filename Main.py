@@ -7,7 +7,7 @@ import traceback
 import RosController as RosController
 
 is_log_stdout = False#True
-is_write_video = True
+is_write_video = False#True
 
 def Main():
 	rclpy.init()

@@ -46,7 +46,9 @@ class PerceptionCortex:
 		depth_image, color_image = self.depth_camera.GetImageData()
 		
 		binary_frame = self.BlobbingFilter(color_image)
-		print(np.max(binary_frame))
+		
+		cv2.imshow("render", binary_frame)
+		cv2.waitKey(1)
 		
 		if self.video_writer is not None:
 			#self.video_writer.WritePair(depth_image, color_image)
