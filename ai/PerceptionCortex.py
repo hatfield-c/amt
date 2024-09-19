@@ -46,7 +46,7 @@ class PerceptionCortex:
 		depth_image, color_image = self.depth_camera.GetImageData()
 		
 		binary_frame = self.BlobbingFilter(color_image)
-		print(binary_frame.shape)
+		
 		cv2.imshow("render", binary_frame)
 		cv2.waitKey(1)
 		
