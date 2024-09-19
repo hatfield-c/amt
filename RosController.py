@@ -112,9 +112,7 @@ class RosController(Node):
 			#	duration = self.takeoff_duration
 			#),
 			"1_forward": FlightColorAlignSequence.FlightColorAlignSequence(
-				yaw = self.forward_heading,
-				speed = self.flight_speed * 0,
-				direction = self.forward_direction,
+				speed = self.flight_speed,
 				duration = self.forward_duration,
 				depth_camera = self.depth_camera,
 				video_writer = self.video_writer
