@@ -87,7 +87,7 @@ class FlightColorAlignSequence:
 			[
 				math.cos(yaw),
 				math.sin(yaw),
-				vertical_error
+				0
 			],
 			np.float32
 		)
@@ -99,7 +99,7 @@ class FlightColorAlignSequence:
 		direction = direction / direction_size
 		
 		velocity = speed * direction
-		velocity[2] = -0.5#vertical_error
+		velocity[2] = vertical_error
 		
 		return yaw, velocity
 		
