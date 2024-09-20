@@ -87,7 +87,7 @@ class FlightColorAlignSequence:
 			[
 				math.cos(yaw),
 				math.sin(yaw),
-				-0.25
+				vertical_error
 			],
 			np.float32
 		)
