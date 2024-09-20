@@ -25,7 +25,7 @@ class FlightColorAlignSequence:
 			d_scale = 0
 		)
 		
-		self.target_lateral = np.array([320, 0])
+		self.target_lateral = 320
 		self.target_height = -5
 		
 		self.start_time = None
