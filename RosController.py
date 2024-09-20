@@ -38,7 +38,7 @@ class RosController(Node):
 		self.flight_speed = 10.0
 		
 		self.takeoff_duration = 5
-		self.forward_duration = 3000
+		self.forward_duration = 15
 		self.backward_duration = 16
 		
 		qos_profile = QoSProfile(
@@ -102,27 +102,27 @@ class RosController(Node):
 		self.backward_direction = -self.forward_direction
 
 		self.trajectory_sequences = {
-			#"0_takeoff": TrajectorySequence.TrajectorySequence(
-			#	start_yaw = self.forward_heading,
-			#	start_speed = self.takeoff_speed,
-			#	start_direction = self.up_direction,
-			#	end_yaw = self.forward_heading,
-			#	end_speed = self.flight_speed,
-			#	end_direction = self.forward_direction,
-			#	duration = self.takeoff_duration
-			#),
+			"0_takeoff": TrajectorySequence.TrajectorySequence(
+				start_yaw = self.forward_heading,
+				start_speed = self.takeoff_speed,
+				start_direction = self.up_direction,
+				end_yaw = self.forward_heading,
+				end_speed = self.flight_speed,
+				end_direction = self.forward_direction,
+				duration = self.takeoff_duration
+			),
 			"1_forward": FlightColorAlignSequence.FlightColorAlignSequence(
 				speed = self.flight_speed,
 				duration = self.forward_duration,
 				depth_camera = self.depth_camera,
 				video_writer = self.video_writer
 			),
-			#"2_backward": ConstantSequence.ConstantSequence(
-			#	yaw = self.backward_heading,
-			#	speed = self.flight_speed,
-			#	direction = self.backward_direction,
-			#	duration = self.backward_duration
-			#),
+			"2_backward": ConstantSequence.ConstantSequence(
+				yaw = self.backward_heading,
+				speed = self.flight_speed,
+				direction = self.backward_direction,
+				duration = self.backward_duration
+			),
 			"4_brakes": ConstantSequence.ConstantSequence(
 				yaw = self.backward_heading,
 				speed = self.flight_speed * 0,

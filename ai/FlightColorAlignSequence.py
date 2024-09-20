@@ -20,7 +20,7 @@ class FlightColorAlignSequence:
 			d_scale = 0
 		)
 		self.lateral_pid = Pid.Pid(
-			p_scale = 1,
+			p_scale = 0.005,
 			i_scale = 0,
 			d_scale = 0
 		)
@@ -73,10 +73,15 @@ class FlightColorAlignSequence:
 		
 		pixel_position = self.perception_cortex.GetTargetPixelPosition()
 		
-		lateral_error = self.lateral_pid.ControlStep(pixel_position[0], self.target_lateral)
+		lateral_error = 0
+		if pixel_position is not None:
+			lateral_error = self.lateral_pid.ControlStep(pixel_position[0], self.target_lateral)
+			
 		vertical_error = self.vertical_pid.ControlStep(position[2], self.target_height, velocity[2])
 		
-		yaw = heading + lateral_error
+		heading_error = np.clip(lateral_error, -math.pi, math.pi)
+		
+		yaw = heading + heading_error
 		speed = self.speed
 		direction = np.array(
 			[
