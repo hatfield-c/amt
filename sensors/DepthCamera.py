@@ -38,8 +38,8 @@ class DepthCamera:
 		depth_image_rgb = np.clip(depth_image, 0, 1)
 		depth_image_rgb = depth_image * 255
 		depth_image_rgb = depth_image.astype(np.uint8)
-		depth_image_rgb = np.tile(depth_image, (1, 3))
 		depth_image_rgb = depth_image.reshape(480, 640, 1)
+		depth_image_rgb = np.tile(depth_image, (1, 1, 3))
 		
 		color_image = np.asanyarray(color_frame.get_data())
 		

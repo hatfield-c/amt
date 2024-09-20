@@ -37,7 +37,7 @@ class RosController(Node):
 		self.takeoff_speed = 10.0
 		self.flight_speed = 10.0
 		
-		self.takeoff_duration = 5
+		self.takeoff_duration = 6
 		self.forward_duration = 15
 		self.backward_duration = 16
 		
@@ -98,7 +98,7 @@ class RosController(Node):
 		if self.forward_heading < 0:
 			self.backward_heading = self.forward_heading + math.pi
 			
-		self.forward_direction = np.array([math.cos(self.forward_heading), math.sin(self.forward_heading), 0], dtype = np.float32)
+		self.forward_direction = np.array([math.cos(self.forward_heading), math.sin(self.forward_heading), -0.5], dtype = np.float32)
 		self.backward_direction = -self.forward_direction
 
 		self.trajectory_sequences = {
@@ -266,7 +266,7 @@ class RosController(Node):
 		
 		self.velocity[0] = msg.vx
 		self.velocity[1] = msg.vy
-		self.velocity[2] = -msg.vz
+		self.velocity[2] = msg.vz
 		
 		self.heading = msg.heading
 		self.heading_smooth = ((2 / 3) * self.heading_smooth) + ((1 / 3) * msg.heading)
