@@ -174,7 +174,7 @@ class RosController(Node):
 			}
 			
 			heading, velocity = trajectory_sequence.GetTrajectory(data)
-			headding_diff = heading - self.heading
+			headding_diff = self.heading - heading
 			
 			print_header = "[" + str(sequence_state) + " : " + trajectory_sequence.GetTimerValueStr() + "]"
 			print(print_header)
