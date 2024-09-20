@@ -20,7 +20,7 @@ class FlightColorAlignSequence:
 			d_scale = 0
 		)
 		self.lateral_pid = Pid.Pid(
-			p_scale = 0.005,
+			p_scale = 0.0005,
 			i_scale = 0,
 			d_scale = 0
 		)

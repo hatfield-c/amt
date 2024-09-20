@@ -38,7 +38,7 @@ class RosController(Node):
 		self.flight_speed = 10.0
 		
 		self.takeoff_duration = 5
-		self.forward_duration = 15 * 100000
+		self.forward_duration = 15
 		self.backward_duration = 16
 		
 		qos_profile = QoSProfile(
