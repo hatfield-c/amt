@@ -6,8 +6,7 @@ class VideoWriter:
 		pass
 		
 	def WritePair(self, depth_image, color_image):
-		depth_image = depth_image.reshape(480, 640, 1)
-		depth_image = np.tile(depth_image, (1, 3))
+		
 
 		merged_image = np.concatenate((depth_image, color_image), axis = 0)
 		
